@@ -12,75 +12,19 @@
   <style>
     html,
     body,
-    #viewDiv {
+    #applicationDiv {
       padding: 0;
       margin: 0;
       height: 100%;
       width: 100%;
     }
-  </style>
-
-  <script src="https://jsdev.arcgis.com/4.11/"></script>
-
-  <script>
-
-    require([
-      "esri/Map",
-      "esri/layers/GeoJSONLayer",
-      "esri/views/SceneView",
-      "dojo/domReady!"
-    ], function(
-      Map,
-      GeoJSONLayer,
-      MapView
-    ) {
-        var geojsonLayer = new GeoJSONLayer({
-          url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
-          title: "USGS Earthquakes",
-          copyright: "USGS",
-          elevationInfo: {
-            mode: "absolute-height",
-            unit: "kilometers",
-            featureExpressionInfo: {
-              expression: "Geometry($feature).z * -1"
-            }
-          },
-          renderer: {
-            type: "simple",
-            symbol: {
-              type: "simple-marker",
-              color: "dodgerblue",
-              size: "10px",
-              outline: {
-                width: "1px",
-                color: "white"
-              }
-            }
-          }
-        });
-
-        var map = new Map({
-          basemap: {
-            portalItem: {
-              id: "58c4506214f3433788f4bcbd86ca1238"
-            }
-          },
-          ground: "world-topobathymetry",
-          layers: [geojsonLayer]
-        });
-
-        var view = new MapView({
-          container: "viewDiv",
-          zoom: 3,
-          map: map
-        });
-      });
-  </script>
+  </style>  
 </head>
 
 <body>
-
-  <div id="viewDiv"></div>
+  <div id="applicationDiv"></div>
+  <script src="src/config.js"></script>
+  <script src="https://jsdev.arcgis.com/4.10/dojo/dojo.js"></script>
 </body>
 
 </html>
