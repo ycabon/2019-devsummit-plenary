@@ -1,8 +1,6 @@
 /// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
 /// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
 
-import { throttle } from "@dojo/core/util";
-
 import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
 import Widget = require("esri/widgets/Widget");
 import { renderable, tsx } from "esri/widgets/support/widget";
@@ -12,6 +10,7 @@ import { whenFalse, watch } from "esri/core/watchUtils";
 import { eachAlways } from "esri/core/promiseUtils";
 import FeatureLayer = require("esri/layers/FeatureLayer");
 import Query = require("esri/tasks/support/Query");
+import StatisticDefinition = require("esri/tasks/support/StatisticDefinition");
 import MapView = require("esri/views/MapView");
 import FeatureLayerView = require("esri/views/layers/FeatureLayerView");
 
@@ -85,16 +84,16 @@ export default class CityStats extends declared(Widget) {
     const where = `CNSTRCT_YR <= ${this.year}`;
     const geometry = this.view.extent;
     const outStatistics = [
-      {
+      new StatisticDefinition({
         onStatisticField: "HEIGHTROOF",
         outStatisticFieldName: "MAX_HEIGHTROOF",
         statisticType: "max"
-      },
-      {
+      }),
+      new StatisticDefinition({
         onStatisticField: "CNSTRCT_YR",
         outStatisticFieldName: "AVG_CNSTRCT_YR",
         statisticType: "avg"
-      }
+      })
     ];
 
     // Execute the queries on the layerview

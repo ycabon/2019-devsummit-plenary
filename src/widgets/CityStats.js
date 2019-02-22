@@ -1,12 +1,9 @@
 /// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
 /// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -19,7 +16,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/core/tsSupport/decorateHelper", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "esri/core/watchUtils", "esri/core/promiseUtils", "esri/tasks/support/Query"], function (require, exports, __extends, __decorate, decorators_1, Widget, widget_1, watchUtils_1, promiseUtils_1, Query) {
+define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/core/tsSupport/decorateHelper", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "esri/core/watchUtils", "esri/core/promiseUtils", "esri/tasks/support/Query", "esri/tasks/support/StatisticDefinition"], function (require, exports, __extends, __decorate, decorators_1, Widget, widget_1, watchUtils_1, promiseUtils_1, Query, StatisticDefinition) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CSS = {
@@ -66,16 +63,16 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             var where = "CNSTRCT_YR <= " + this.year;
             var geometry = this.view.extent;
             var outStatistics = [
-                {
+                new StatisticDefinition({
                     onStatisticField: "HEIGHTROOF",
                     outStatisticFieldName: "MAX_HEIGHTROOF",
                     statisticType: "max"
-                },
-                {
+                }),
+                new StatisticDefinition({
                     onStatisticField: "CNSTRCT_YR",
                     outStatisticFieldName: "AVG_CNSTRCT_YR",
                     statisticType: "avg"
-                }
+                })
             ];
             // Execute the queries on the layerview
             // instead of the layer

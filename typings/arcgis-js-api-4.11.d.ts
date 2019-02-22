@@ -1396,37 +1396,13 @@ declare namespace __esri {
     error?: any;
   }
 
-  export type Executor = () => void;
+  export type Executor = (resolve: ResolveCallback, reject: RejectCallback) => void;
 
   export type FilterPredicateCallback = (value: any, index: number) => IPromise<any>;
 
-  /**
-   * A function that will reject the promise created in [create()](https://developers.arcgis.com/javascript/latest/api-reference/esri-core-promiseUtils.html#create).
-   *
-   * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-core-promiseUtils.html#RejectCallback)
-   */
-  export interface RejectCallback extends Object {
-    /**
-     * The error with which the promise rejected. Defined  only if the promise is rejected.
-     *
-     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-core-promiseUtils.html#RejectCallback)
-     */
-    error?: any;
-  }
+  export type RejectCallback = (error: any) => void;
 
-  /**
-   * A function that will resolve the promise created in [create()](https://developers.arcgis.com/javascript/latest/api-reference/esri-core-promiseUtils.html#create).
-   *
-   * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-core-promiseUtils.html#ResolveCallback)
-   */
-  export interface ResolveCallback extends Object {
-    /**
-     * The value with which the promise resolved. Defined  only if the promise is fulfilled.
-     *
-     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-core-promiseUtils.html#ResolveCallback)
-     */
-    value?: any | IPromise<any>;
-  }
+  export type ResolveCallback = (value: any | IPromise<any>) => void;
 
   interface requireUtils {
     /**
@@ -8742,7 +8718,7 @@ declare namespace __esri {
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
      */
-    readonly capabilities: any;
+    readonly capabilities: GeoJSONLayerCapabilities;
     /**
      * Copyright information for the layer.
      *
@@ -8780,13 +8756,13 @@ declare namespace __esri {
      */
     fields: Field[];
     /**
-     * The geometry type of features in the layer. If specified, the layer will onlyload the specified geometry type when there are multiple types of geometries in the GeoJSON file.Otherwise, the layer will load the geometries that match the first geometry's type in the GeoJSON file.**Possible Values:** point | multipoint | polyline | polygon | multipatch | mesh
+     * The geometry type of features in the layer. All features must be of the same type.**Possible Values:** point | multipoint | polyline | polygon
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#geometryType)
      */
     geometryType: string;
     /**
-     * Indicates whether the client-side features in the layer have `Z` (elevation) values.Refer to [elevationInfo](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#elevationInfo) for details regarding placement and renderingof features with z-values in 3D [SceneViews](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-SceneView.html).Use the `supportsZ` property in the FeatureLayer's [capabilities.data](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)object to verify if `Z` values are supported on [feature service](https://developers.arcgis.com/rest/services-reference/feature-service.htm) features.
+     * Indicates whether the client-side features in the layer have `Z` (elevation) values.Refer to [elevationInfo](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#elevationInfo) for details regarding placement and renderingof features with z-values in 3D [SceneViews](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-SceneView.html).Use the `supportsZ` property in the layer's [capabilities.data](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)object to verify if `Z` values are supported on [feature service](https://developers.arcgis.com/rest/services-reference/feature-service.htm) features.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#hasZ)
      *
@@ -8847,7 +8823,7 @@ declare namespace __esri {
      */
     screenSizePerspectiveEnabled: boolean;
     /**
-     * The spatial reference of the layer. The default value is WGS84.This property can be set explicitly to project the longitude and latitudecoordinates when the layer parses the CSV file. While not required, explicitly settingthe spatial reference of the layer will improve the performancewhen projecting to a spatial reference other than the one used by thecoordinates in the raw data.
+     * The spatial reference of the layer. The default value is WGS84.This property can be set explicitly to project the longitude and latitudecoordinates when the layer parses the GeoJSON file. While not required, explicitly settingthe spatial reference of the layer will improve the performancewhen projecting to a spatial reference other than the one used by thecoordinates in the raw data.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#spatialReference)
      *
@@ -8855,13 +8831,30 @@ declare namespace __esri {
      */
     spatialReference: SpatialReference;
     /**
+     * An array of feature templates defined in the layer.See [ArcGIS Pro subtypes document](https://pro.arcgis.com/en/pro-app/help/data/geodatabases/overview/an-overview-of-subtypes.htm).
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#templates)
+     */
+    templates: FeatureTemplate[];
+    /**
      * The URL of the GeoJSON file.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#url)
      */
     url: string;
 
-    applyEdits(): void;
+    /**
+     * Applies edits to features in a layer. New features can be created and existingfeatures can be updated or deleted. Feature geometries and/or attributes may be modified.Only applicable to layers in a[feature service](https://developers.arcgis.com/rest/services-reference/feature-service.htm)and client-side features set through the layer's [source](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#source).If client-side features are added, removed or updated at runtime using [applyEdits()](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#applyEdits)then use [queryFeatures()](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#queryFeatures) to return updated features.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#applyEdits)
+     *
+     * @param edits Object containing features to be added, updated or deleted.
+     * @param edits.addFeatures Array of features to be added.Values of non nullable fields must be provided when adding new features. Date fields must have[numeric](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime) valuesrepresenting universal time.
+     * @param edits.updateFeatures Array of features to be updated. Each feature must have valid[objectId](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#objectIdField). Values of non nullable fields must be provided when updating features. Date fields must have[numeric](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime) valuesrepresenting universal time.
+     * @param edits.deleteFeatures An array of features orobjects to be deleted. When an array of features is passed, each feature must have a valid[objectId](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#objectIdField). When an array of objects is used, each object must have a valid`objectId` property.
+     *
+     */
+    applyEdits(edits: GeoJSONLayerApplyEditsEdits): IPromise<any>;
     /**
      * Creates a popup template for the layer, populated with all the fields of the layer.
      *
@@ -8873,6 +8866,14 @@ declare namespace __esri {
      *
      */
     createPopupTemplate(options?: GeoJSONLayerCreatePopupTemplateOptions): PopupTemplate;
+    /**
+     * Creates query parameter object that can be used to fetch features thatsatisfy the layer's configurations such as [definitionExpression](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#definitionExpression).It will return `Z` and `M` values based on the layer's [data capabilities](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities).It sets the query parameter's [outFields](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-Query.html#outFields) property to `["*"]`.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#createQuery)
+     *
+     *
+     */
+    createQuery(): Query;
     /**
      * Returns the [Field](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-support-Field.html) instance for a field name.This method first looks for the field by its `name`, then case incensitively by `name` if not found.
      *
@@ -8893,6 +8894,42 @@ declare namespace __esri {
      *
      */
     getFieldDomain(fieldName: string, options?: GeoJSONLayerGetFieldDomainOptions): Domain;
+    /**
+     * Executes a [Query](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-Query.html) against the feature service andreturns the [Extent](https://developers.arcgis.com/javascript/latest/api-reference/esri-geometry-Extent.html) of features that satisfy the query. If noparameters are specified, then the extent and count of all featuressatisfying the layer's configuration/filters are returned.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#queryExtent)
+     *
+     * @param params Specifies the attributes and spatialfilter of the query. If no parameters are specified, then the extent and count of all featuressatisfying the layer's configuration/filters are returned.
+     *
+     */
+    queryExtent(params?: Query | QueryProperties): IPromise<any>;
+    /**
+     * Executes a [Query](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-Query.html) against the layer andreturns the number of features that satisfy the query. If no parameters are specified,the total number of features satisfying the layer's configuration/filters is returned.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#queryFeatureCount)
+     *
+     * @param params Specifies the attributes andspatial filter of the query. If no parameters are specified, the total number of featuressatisfying the layer's configuration/filters is returned.
+     *
+     */
+    queryFeatureCount(params?: Query | QueryProperties): IPromise<number>;
+    /**
+     * Executes a [Query](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-Query.html) against the layer and returns a[FeatureSet](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-FeatureSet.html), which can be accessed using the `.then()` methodonce the promise resolves.A [FeatureSet](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-FeatureSet.html) contains an array of [Graphic](https://developers.arcgis.com/javascript/latest/api-reference/esri-Graphic.html)features, which can be added to the [view's graphics](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-View.html#graphics).This array will not be populated if zero results are found.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#queryFeatures)
+     *
+     * @param params Specifies the attributes and spatialfilter of the query. If no parameters are specified, then all features satisfying the layer'sconfiguration/filters are returned.
+     *
+     */
+    queryFeatures(params?: Query | QueryProperties): IPromise<FeatureSet>;
+    /**
+     * Executes a [Query](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-Query.html) against the layer and returns anarray of Object IDs for features that satisfy the input query. If no parameters are specified,then the Object IDs of all features satisfying the layer's configuration/filters are returned.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#queryObjectIds)
+     *
+     * @param params Specifies the attributes and spatialfilter of the query. If no parameters are specified, then the Object IDs of all featuressatisfying the layer's configuration/filters are returned.
+     *
+     */
+    queryObjectIds(params?: Query | QueryProperties): IPromise<number[]>;
 
     on(name: "layerview-create", eventHandler: GeoJSONLayerLayerviewCreateEventHandler): IHandle;
 
@@ -8943,7 +8980,7 @@ declare namespace __esri {
      */
     fields?: FieldProperties[];
     /**
-     * The geometry type of features in the layer. If specified, the layer will onlyload the specified geometry type when there are multiple types of geometries in the GeoJSON file.Otherwise, the layer will load the geometries that match the first geometry's type in the GeoJSON file.**Possible Values:** point | multipoint | polyline | polygon | multipatch | mesh
+     * The geometry type of features in the layer. All features must be of the same type.**Possible Values:** point | multipoint | polyline | polygon
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#geometryType)
      */
@@ -9002,7 +9039,7 @@ declare namespace __esri {
      */
     screenSizePerspectiveEnabled?: boolean;
     /**
-     * The spatial reference of the layer. The default value is WGS84.This property can be set explicitly to project the longitude and latitudecoordinates when the layer parses the CSV file. While not required, explicitly settingthe spatial reference of the layer will improve the performancewhen projecting to a spatial reference other than the one used by thecoordinates in the raw data.
+     * The spatial reference of the layer. The default value is WGS84.This property can be set explicitly to project the longitude and latitudecoordinates when the layer parses the GeoJSON file. While not required, explicitly settingthe spatial reference of the layer will improve the performancewhen projecting to a spatial reference other than the one used by thecoordinates in the raw data.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#spatialReference)
      *
@@ -9010,11 +9047,332 @@ declare namespace __esri {
      */
     spatialReference?: SpatialReferenceProperties;
     /**
+     * An array of feature templates defined in the layer.See [ArcGIS Pro subtypes document](https://pro.arcgis.com/en/pro-app/help/data/geodatabases/overview/an-overview-of-subtypes.htm).
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#templates)
+     */
+    templates?: FeatureTemplateProperties[];
+    /**
      * The URL of the GeoJSON file.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#url)
      */
     url?: string;
+  }
+
+  export interface GeoJSONLayerApplyEditsEdits extends Object {
+    /**
+     * Array of features to be added.Values of non nullable fields must be provided when adding new features. Date fields must have[numeric](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime) valuesrepresenting universal time.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#applyEdits)
+     */
+    addFeatures?: Graphic[];
+    /**
+     * Array of features to be updated. Each feature must have valid[objectId](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#objectIdField). Values of non nullable fields must be provided when updating features. Date fields must have[numeric](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime) valuesrepresenting universal time.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#applyEdits)
+     */
+    updateFeatures?: Graphic[];
+    /**
+     * An array of features orobjects to be deleted. When an array of features is passed, each feature must have a valid[objectId](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#objectIdField). When an array of objects is used, each object must have a valid`objectId` property.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#applyEdits)
+     */
+    deleteFeatures?: Graphic[] | any[];
+  }
+
+  export interface GeoJSONLayerCapabilities extends Object {
+    /**
+     * Describes characteristics of the data in the layer.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    data: GeoJSONLayerCapabilitiesData;
+    /**
+     * Describes editing capabilities that can be performed on the features in the layer.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    editing: GeoJSONLayerCapabilitiesEditing;
+    /**
+     * Describes operations that can be performed on features in the layer.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    operations: GeoJSONLayerCapabilitiesOperations;
+    /**
+     * Describes [query](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-Query.html)operations that can be performed on features in the layer.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    query: GeoJSONLayerCapabilitiesQuery;
+    /**
+     * Indicates if the layer's query operation supports querying features or records related to features in the layer.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    queryRelated: GeoJSONLayerCapabilitiesQueryRelated;
+  }
+
+  export interface GeoJSONLayerCapabilitiesData extends Object {
+    /**
+     * Indicates if the attachment is enabled on the layer.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsAttachment: boolean;
+    /**
+     * Indicates if the features in the layer support M values. Requires ArcGIS Server service 10.1 or greater.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsM: boolean;
+    /**
+     * Indicates if the features in the layer support Z values. Requires ArcGIS Server service 10.1 or greater.See [elevationInfo](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#elevationInfo) for details regarding placement andrendering of features with z-values in 3D [SceneViews](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-SceneView.html).
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsZ: boolean;
+  }
+
+  export interface GeoJSONLayerCapabilitiesEditing extends Object {
+    /**
+     * Indicates if anonymous users can delete features created by others.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsDeleteByAnonymous: boolean;
+    /**
+     * Indicates if logged in users can delete features created by others.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsDeleteByOthers: boolean;
+    /**
+     * Indicates if the geometry of the features in the layer can be edited.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsGeometryUpdate: boolean;
+    /**
+     * Indicates if the `globalid` values provided by the client are used in [applyEdits](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#applyEdits).
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsGlobalId: boolean;
+    /**
+     * Indicates if the `rollbackOnFailure` parameter can be set to `true` or `false` when running the synchronizeReplica operation.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsRollbackOnFailure: boolean;
+    /**
+     * Indicates if anonymous users can update features created by others.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsUpdateByAnonymous: boolean;
+    /**
+     * Indicates if logged in users can update features created by others.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsUpdateByOthers: boolean;
+    /**
+     * Indicates if `m-values` must be provided when updating features.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsUpdateWithoutM: boolean;
+    /**
+     * Indicates if the layer supports uploading attachments by [UploadId](https://developers.arcgis.com/rest/services-reference/item.htm).
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsUploadWithItemId: boolean;
+  }
+
+  export interface GeoJSONLayerCapabilitiesOperations extends Object {
+    /**
+     * Indicates if new features can be [added](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#applyEdits) to the layer.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsAdd: boolean;
+    /**
+     * Indicates if features can be [deleted](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#applyEdits) from the layer.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsDelete: boolean;
+    /**
+     * Indicates if features in the layer can be [updated](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#applyEdits).
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsUpdate: boolean;
+    /**
+     * Indicates if features in the layer can be [edited](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#applyEdits). Use `supportsAdd`, `supportsUpdate` and `supportsDelete` to determine which editing operations are supported.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsEditing: boolean;
+    /**
+     * Indicates if values of one or more field values in the layercan be updated. See the [Calculate REST operation](https://developers.arcgis.com/rest/services-reference/calculate-feature-service-layer-.htm)document for more information.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsCalculate: boolean;
+    /**
+     * Indicates if features in the layer can be [queried](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#queryFeatures).
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsQuery: boolean;
+    /**
+     * Indicates if the layer supports[REST API queryAttachments](https://developers.arcgis.com/rest/services-reference/query-attachments-feature-service-layer-.htm)operation, which is supported with hosted feature services at version 10.5 and greater.If `false`, [queryAttachments() method](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#queryAttachments) can only return attachments for one feature at a time.If `true`, `queryAttachments()` can return attachments for array of [objectIds](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-AttachmentQuery.html#objectIds).
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsQueryAttachments: boolean;
+    /**
+     * Indicates if the layer supports a SQL-92 expression or where clause. This operation isonly supported in ArcGIS Online hosted feature services.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsValidateSql: boolean;
+    /**
+     * Indicates if resized attachments are supported in the layer.This is useful for showing thumbnails in [Popups](https://developers.arcgis.com/javascript/latest/api-reference/esri-widgets-Popup.html).
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsResizeAttachments: boolean;
+  }
+
+  export interface GeoJSONLayerCapabilitiesQuery extends Object {
+    /**
+     * Indicates if the geometry centroid associated with each polygon feature can be returned. This operation isonly supported in ArcGIS Online hosted feature services.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsCentroid: boolean;
+    /**
+     * Indicates if the layer's query operation supports a buffer distance for input geometries.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsDistance: boolean;
+    /**
+     * Indicates if the layer supports queries for distinct values based on fields specified in the [outFields](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#outFields).
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsDistinct: boolean;
+    /**
+     * Indicates if the query operation supports `disjoint` [spatial relationship](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-Query.html#spatialRelationship). This is valid only for[hosted feature services](http://doc.arcgis.com/en/arcgis-online/share-maps/hosted-web-layers.htm).
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsDisjointSpatialRelationship: boolean;
+    /**
+     * Indicates if the layer's query response includes the extent of features.At 10.3, this option is only available for hosted feature services. At 10.3.1, it is available for hosted and non-hosted feature services.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsExtent: boolean;
+    /**
+     * Indicates if the layer's query response contains geometry attributes, including shape area and length attributes.This operation is only supported in ArcGIS Online hosted feature services.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsGeometryProperties: boolean;
+    /**
+     * Indicates if the layer supports the [having](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-Query.html#having) clause on the service. Requires an ArcGIS Server service 10.6.1 or greater.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsHavingClause: boolean;
+    /**
+     * Indicates if features returned in the query response can be ordered by one or more fields. Requires an ArcGIS Server service 10.3 or greater.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsOrderBy: boolean;
+    /**
+     * Indicates if the query response supports pagination. Requires an ArcGIS Server service 10.3 or greater.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsPagination: boolean;
+    /**
+     * Indicates if the query response includes the [query geometry](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-FeatureSet.html#queryGeometry). This is valid only for[hosted feature services](http://doc.arcgis.com/en/arcgis-online/share-maps/hosted-web-layers.htm).
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsQueryGeometry: boolean;
+    /**
+     * Indicates if the query operation supports the projection of geometries onto a virtual grid. Requires an ArcGIS Server service 10.6.1 or greater.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsQuantization: boolean;
+    /**
+     * Indicates if the query operation supports quantization designed to be used in edit mode (highest resolution at the given spatial reference). Requires an ArcGIS Server service 10.6.1 or greater.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsQuantizationEditMode: boolean;
+    /**
+     * Indicates if the number of features returned by the query operation can be controlled.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsResultType: boolean;
+    /**
+     * Indicates if the query operation supports SQL expressions.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsSqlExpression: boolean;
+    /**
+     * Indicates if the query operation supports using standardized queries.Learn more about [standardized queries here](http://server.arcgis.com/en/server/latest/administer/linux/about-standardized-queries.htm).
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsStandardizedQueriesOnly: boolean;
+    /**
+     * Indicates if the layer supports field-based statistical functions. Requires ArcGIS Server service 10.1 or greater.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsStatistics: boolean;
+    /**
+     * Indicates if the layer supports historic moment query. Requires ArcGIS Server service 10.5 or greater.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsHistoricMoment: boolean;
+  }
+
+  export interface GeoJSONLayerCapabilitiesQueryRelated extends Object {
+    /**
+     * Indicates if the layer's query response includes the number of features or records related to features in the layer.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsCount: boolean;
+    /**
+     * Indicates if the related features or records returned in the query response can be ordered by one or more fields.Requires ArcGIS Server service 10.3 or greater.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsOrderBy: boolean;
+    /**
+     * Indicates if the query response supports pagination for related features or records. Requires ArcGIS Server service 10.3 or greater.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#capabilities)
+     */
+    supportsPagination: boolean;
   }
 
   export interface GeoJSONLayerCreatePopupTemplateOptions extends Object {
@@ -19170,7 +19528,7 @@ declare namespace __esri {
      */
     backgroundColor: Color;
     /**
-     * Only applicable when two or more [attributes](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-DotDensityRenderer.html#attributes) are specified. When `true`,indicates that colors for overlapping dots will blend. For example in a feature wherea high density of blue dots exist along a high density of red dots, some of the dots mayappear as purple dots if this property is blue. When `false` only one color will be favored overthe others in rendering.Blend enabled | Blend disabled--------------|---------------![dot-density-blend](https://developers.arcgis.com/javascript/assets/img/apiref/renderers/dot-density-blend.png) | ![dot-density-no-blend](https://developers.arcgis.com/javascript/assets/img/apiref/renderers/dot-density-no-blend.png)
+     * Only applicable when two or more [attributes](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-DotDensityRenderer.html#attributes) are specified. When `true`,indicates that colors for overlapping dots will blend. For example, in a feature wherea high density of blue dots exist along a high density of red dots, some of the dots mayappear as purple dots if this property is blue. When `false` only one color will be favored overthe others in rendering.Blend enabled | Blend disabled--------------|---------------![dot-density-blend](https://developers.arcgis.com/javascript/assets/img/apiref/renderers/dot-density-blend.png) | ![dot-density-no-blend](https://developers.arcgis.com/javascript/assets/img/apiref/renderers/dot-density-no-blend.png)
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-DotDensityRenderer.html#blendDots)
      *
@@ -19216,7 +19574,7 @@ declare namespace __esri {
      */
     readonly type: "dot-density";
     /**
-     * An array of [Size Visual Variable](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-visualVariables-SizeVariable.html#ScaleDependentStops) objects.Only one [ScaleDependentStops](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-visualVariables-SizeVariable.html#ScaleDependentStops) visual variableshould be provided. This visual variable is used to vary the [outline](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-DotDensityRenderer.html#outline) width based on the [view.scale](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-MapView.html#scale).See the snippet below for an example of this.
+     * An array of [Size Visual Variable](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-visualVariables-SizeVariable.html) objects.Only one [ScaleDependentStops](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-visualVariables-SizeVariable.html#ScaleDependentStops) visual variableshould be provided. This visual variable is used to vary the [outline](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-DotDensityRenderer.html#outline) width based on the [view.scale](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-MapView.html#scale).See the snippet below for an example of this.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-DotDensityRenderer.html#visualVariables)
      */
@@ -19273,7 +19631,7 @@ declare namespace __esri {
      */
     backgroundColor?: Color | number[] | string;
     /**
-     * Only applicable when two or more [attributes](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-DotDensityRenderer.html#attributes) are specified. When `true`,indicates that colors for overlapping dots will blend. For example in a feature wherea high density of blue dots exist along a high density of red dots, some of the dots mayappear as purple dots if this property is blue. When `false` only one color will be favored overthe others in rendering.Blend enabled | Blend disabled--------------|---------------![dot-density-blend](https://developers.arcgis.com/javascript/assets/img/apiref/renderers/dot-density-blend.png) | ![dot-density-no-blend](https://developers.arcgis.com/javascript/assets/img/apiref/renderers/dot-density-no-blend.png)
+     * Only applicable when two or more [attributes](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-DotDensityRenderer.html#attributes) are specified. When `true`,indicates that colors for overlapping dots will blend. For example, in a feature wherea high density of blue dots exist along a high density of red dots, some of the dots mayappear as purple dots if this property is blue. When `false` only one color will be favored overthe others in rendering.Blend enabled | Blend disabled--------------|---------------![dot-density-blend](https://developers.arcgis.com/javascript/assets/img/apiref/renderers/dot-density-blend.png) | ![dot-density-no-blend](https://developers.arcgis.com/javascript/assets/img/apiref/renderers/dot-density-no-blend.png)
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-DotDensityRenderer.html#blendDots)
      *
@@ -19313,7 +19671,7 @@ declare namespace __esri {
      */
     seed?: number;
     /**
-     * An array of [Size Visual Variable](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-visualVariables-SizeVariable.html#ScaleDependentStops) objects.Only one [ScaleDependentStops](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-visualVariables-SizeVariable.html#ScaleDependentStops) visual variableshould be provided. This visual variable is used to vary the [outline](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-DotDensityRenderer.html#outline) width based on the [view.scale](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-MapView.html#scale).See the snippet below for an example of this.
+     * An array of [Size Visual Variable](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-visualVariables-SizeVariable.html) objects.Only one [ScaleDependentStops](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-visualVariables-SizeVariable.html#ScaleDependentStops) visual variableshould be provided. This visual variable is used to vary the [outline](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-DotDensityRenderer.html#outline) width based on the [view.scale](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-MapView.html#scale).See the snippet below for an example of this.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-DotDensityRenderer.html#visualVariables)
      */
@@ -35844,7 +36202,7 @@ declare namespace __esri {
      */
     geometries2: Geometry[];
     /**
-     * The spatial relationship to be tested between the two input geometry arrays. See table below for a list of possible values.If the relation is specified as `relation`, the `relationParamater` parameter describes the spatialrelationship and must be specified.Value | Description------|------------cross | Two polylines cross if they share only points in common, at least one of which is not an endpoint. A polyline and an polygon cross if they share a polyline in common on the interior of the polygon which is not equivalent to the entire polyline. Cross is a Clementini operator. If either one of the geometries is empty, the geometries do not cross.disjoint | Two geometries are disjoint if their intersection is empty. Two geometries intersect if disjoint is "false".in | The base geometry is within the comparison geometry if the base geometry is the intersection of the geometries and the intersection of their interiors is not empty. An empty geometry is within another geometry, unless the other geometry is empty.interior-intersection | Geometries intersect excluding boundary touch.intersection | Geometry interiors intersect or boundaries touch, same as 'not disjoint'.line-coincidence | The boundaries of the geometries must share an intersection, but the relationship between the interiors of the shapes is not considered (they could overlap, one could be contained in the other, or their interiors could be disjoint). This relation applies to polylines and polygons.line-touch | Two geometries are said to touch when the intersection of the geometries is non-empty, but the intersection of their interiors is empty. This evaluates if the touch occurs along a boundary (not a point). Valid for polygons.overlap | Two polylines share a common sub-line, or two polygons share a common sub-area. Two geometries do not overlap if either one is empty.point-touch | Two geometries are said to touch when the intersection of the geometries is non-empty, but the intersection of their interiors is empty. This evaluates if the touch occurs at a point (not a boundary).relation | Allows specification of any relationship defined using the Shape Comparison Language. If this value is used, a value for `relationParameter` must be specified.touch | The union of point touch and line touch. Two geometries are said to touch when the intersection of the geometries is non-empty, but the intersection of their interiors is empty. For example, a point touches a polyline only if the point is coincident with one of the polyline end points. If either one of the two geometries is empty, the geometries are not touched.within | Same as `in` but also allows polylines that are strictly on the boundaries of polygons to be considered in the polygon.
+     * The spatial relationship to be tested between the two input geometry arrays. See table below for a list of possible values.If the relation is specified as `relation`, the `relationParameter` parameter describes the spatialrelationship and must be specified.Value | Description------|------------cross | Two polylines cross if they share only points in common, at least one of which is not an endpoint. A polyline and an polygon cross if they share a polyline in common on the interior of the polygon which is not equivalent to the entire polyline. Cross is a Clementini operator. If either one of the geometries is empty, the geometries do not cross.disjoint | Two geometries are disjoint if their intersection is empty. Two geometries intersect if disjoint is "false".in | The base geometry is within the comparison geometry if the base geometry is the intersection of the geometries and the intersection of their interiors is not empty. An empty geometry is within another geometry, unless the other geometry is empty.interior-intersection | Geometries intersect excluding boundary touch.intersection | Geometry interiors intersect or boundaries touch, same as 'not disjoint'.line-coincidence | The boundaries of the geometries must share an intersection, but the relationship between the interiors of the shapes is not considered (they could overlap, one could be contained in the other, or their interiors could be disjoint). This relation applies to polylines and polygons.line-touch | Two geometries are said to touch when the intersection of the geometries is non-empty, but the intersection of their interiors is empty. This evaluates if the touch occurs along a boundary (not a point). Valid for polygons.overlap | Two polylines share a common sub-line, or two polygons share a common sub-area. Two geometries do not overlap if either one is empty.point-touch | Two geometries are said to touch when the intersection of the geometries is non-empty, but the intersection of their interiors is empty. This evaluates if the touch occurs at a point (not a boundary).relation | Allows specification of any relationship defined using the Shape Comparison Language. If this value is used, a value for `relationParameter` must be specified.touch | The union of point touch and line touch. Two geometries are said to touch when the intersection of the geometries is non-empty, but the intersection of their interiors is empty. For example, a point touches a polyline only if the point is coincident with one of the polyline end points. If either one of the two geometries is empty, the geometries are not touched.within | Same as `in` but also allows polylines that are strictly on the boundaries of polygons to be considered in the polygon.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-RelationParameters.html#relation)
      */
@@ -35886,7 +36244,7 @@ declare namespace __esri {
      */
     geometries2?: GeometryProperties[];
     /**
-     * The spatial relationship to be tested between the two input geometry arrays. See table below for a list of possible values.If the relation is specified as `relation`, the `relationParamater` parameter describes the spatialrelationship and must be specified.Value | Description------|------------cross | Two polylines cross if they share only points in common, at least one of which is not an endpoint. A polyline and an polygon cross if they share a polyline in common on the interior of the polygon which is not equivalent to the entire polyline. Cross is a Clementini operator. If either one of the geometries is empty, the geometries do not cross.disjoint | Two geometries are disjoint if their intersection is empty. Two geometries intersect if disjoint is "false".in | The base geometry is within the comparison geometry if the base geometry is the intersection of the geometries and the intersection of their interiors is not empty. An empty geometry is within another geometry, unless the other geometry is empty.interior-intersection | Geometries intersect excluding boundary touch.intersection | Geometry interiors intersect or boundaries touch, same as 'not disjoint'.line-coincidence | The boundaries of the geometries must share an intersection, but the relationship between the interiors of the shapes is not considered (they could overlap, one could be contained in the other, or their interiors could be disjoint). This relation applies to polylines and polygons.line-touch | Two geometries are said to touch when the intersection of the geometries is non-empty, but the intersection of their interiors is empty. This evaluates if the touch occurs along a boundary (not a point). Valid for polygons.overlap | Two polylines share a common sub-line, or two polygons share a common sub-area. Two geometries do not overlap if either one is empty.point-touch | Two geometries are said to touch when the intersection of the geometries is non-empty, but the intersection of their interiors is empty. This evaluates if the touch occurs at a point (not a boundary).relation | Allows specification of any relationship defined using the Shape Comparison Language. If this value is used, a value for `relationParameter` must be specified.touch | The union of point touch and line touch. Two geometries are said to touch when the intersection of the geometries is non-empty, but the intersection of their interiors is empty. For example, a point touches a polyline only if the point is coincident with one of the polyline end points. If either one of the two geometries is empty, the geometries are not touched.within | Same as `in` but also allows polylines that are strictly on the boundaries of polygons to be considered in the polygon.
+     * The spatial relationship to be tested between the two input geometry arrays. See table below for a list of possible values.If the relation is specified as `relation`, the `relationParameter` parameter describes the spatialrelationship and must be specified.Value | Description------|------------cross | Two polylines cross if they share only points in common, at least one of which is not an endpoint. A polyline and an polygon cross if they share a polyline in common on the interior of the polygon which is not equivalent to the entire polyline. Cross is a Clementini operator. If either one of the geometries is empty, the geometries do not cross.disjoint | Two geometries are disjoint if their intersection is empty. Two geometries intersect if disjoint is "false".in | The base geometry is within the comparison geometry if the base geometry is the intersection of the geometries and the intersection of their interiors is not empty. An empty geometry is within another geometry, unless the other geometry is empty.interior-intersection | Geometries intersect excluding boundary touch.intersection | Geometry interiors intersect or boundaries touch, same as 'not disjoint'.line-coincidence | The boundaries of the geometries must share an intersection, but the relationship between the interiors of the shapes is not considered (they could overlap, one could be contained in the other, or their interiors could be disjoint). This relation applies to polylines and polygons.line-touch | Two geometries are said to touch when the intersection of the geometries is non-empty, but the intersection of their interiors is empty. This evaluates if the touch occurs along a boundary (not a point). Valid for polygons.overlap | Two polylines share a common sub-line, or two polygons share a common sub-area. Two geometries do not overlap if either one is empty.point-touch | Two geometries are said to touch when the intersection of the geometries is non-empty, but the intersection of their interiors is empty. This evaluates if the touch occurs at a point (not a boundary).relation | Allows specification of any relationship defined using the Shape Comparison Language. If this value is used, a value for `relationParameter` must be specified.touch | The union of point touch and line touch. Two geometries are said to touch when the intersection of the geometries is non-empty, but the intersection of their interiors is empty. For example, a point touches a polyline only if the point is coincident with one of the polyline end points. If either one of the two geometries is empty, the geometries are not touched.within | Same as `in` but also allows polylines that are strictly on the boundaries of polygons to be considered in the polygon.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-tasks-support-RelationParameters.html#relation)
      */
@@ -43389,7 +43747,7 @@ declare namespace __esri {
      */
     mode: string;
     /**
-     * Two-dimensional array of numbers representing the coordinates of each vertexthat comprising the drawn geometry.
+     * Two-dimensional array of numbers representing the coordinates of each vertexcomprising the geometry being drawn.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-draw-PolylineDrawAction.html#vertices)
      */
@@ -43650,6 +44008,12 @@ declare namespace __esri {
      */
     readonly availableFields: string[];
     /**
+     * The effect applied to the layer view. The effect allows for the selection of features via a[filter](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#filter), and an[insideEffect](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#insideEffect) and[outsideEffect](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#outsideEffect)are applied to those features that respectively pass or fail the filter requirements.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-FeatureLayerView.html#effect)
+     */
+    effect: FeatureEffect;
+    /**
      * The geometry and attribute filter. Only the features that satisfy the filterare displayed.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-FeatureLayerView.html#filter)
@@ -43732,6 +44096,12 @@ declare namespace __esri {
   export const FeatureLayerView: FeatureLayerViewConstructor;
 
   interface FeatureLayerViewProperties extends LayerViewProperties {
+    /**
+     * The effect applied to the layer view. The effect allows for the selection of features via a[filter](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#filter), and an[insideEffect](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#insideEffect) and[outsideEffect](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#outsideEffect)are applied to those features that respectively pass or fail the filter requirements.
+     *
+     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-FeatureLayerView.html#effect)
+     */
+    effect?: FeatureEffectProperties;
     /**
      * The geometry and attribute filter. Only the features that satisfy the filterare displayed.
      *
@@ -44220,13 +44590,13 @@ declare namespace __esri {
      */
     filter: FeatureFilter;
     /**
-     * The graphical [css filter](https://developer.mozilla.org/en-US/docs/Web/CSS/filter)operation applied to the features that meet the [filter](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#filter) requirements.At 4.11, `grayscale`, `sepia`, `hue-rotate`, `invert`, `opacity`, `brightness` and `contrast`css filter functions are supported.
+     * The graphical [css filter](https://developer.mozilla.org/en-US/docs/Web/CSS/filter)operation applied to the features that meet the [filter](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#filter) requirements.At 4.11, [grayscale](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/grayscale),[sepia](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/sepia),[hue-rotate](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/sepia),[invert](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/invert),[opacity](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/opacity),[brightness](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/brightness) and[contrast](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/contrast)css filter functions are supported.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#insideEffect)
      */
     insideEffect: string;
     /**
-     * The graphical [css filter](https://developer.mozilla.org/en-US/docs/Web/CSS/filter)operation applied to the features that meet the [filter](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#filter) requirements.At 4.11, `grayscale`, `sepia`, `hue-rotate`, `invert`, `opacity`, `brightness` and `contrast`css filter functions are supported.
+     * The graphical [css filter](https://developer.mozilla.org/en-US/docs/Web/CSS/filter)operation applied to the features that meet the [filter](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#filter) requirements.At 4.11, [grayscale](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/grayscale),[sepia](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/sepia),[hue-rotate](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/sepia),[invert](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/invert),[opacity](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/opacity),[brightness](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/brightness) and[contrast](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/contrast)css filter functions are supported.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#outsideEffect)
      */
@@ -44258,13 +44628,13 @@ declare namespace __esri {
      */
     filter?: FeatureFilterProperties;
     /**
-     * The graphical [css filter](https://developer.mozilla.org/en-US/docs/Web/CSS/filter)operation applied to the features that meet the [filter](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#filter) requirements.At 4.11, `grayscale`, `sepia`, `hue-rotate`, `invert`, `opacity`, `brightness` and `contrast`css filter functions are supported.
+     * The graphical [css filter](https://developer.mozilla.org/en-US/docs/Web/CSS/filter)operation applied to the features that meet the [filter](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#filter) requirements.At 4.11, [grayscale](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/grayscale),[sepia](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/sepia),[hue-rotate](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/sepia),[invert](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/invert),[opacity](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/opacity),[brightness](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/brightness) and[contrast](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/contrast)css filter functions are supported.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#insideEffect)
      */
     insideEffect?: string;
     /**
-     * The graphical [css filter](https://developer.mozilla.org/en-US/docs/Web/CSS/filter)operation applied to the features that meet the [filter](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#filter) requirements.At 4.11, `grayscale`, `sepia`, `hue-rotate`, `invert`, `opacity`, `brightness` and `contrast`css filter functions are supported.
+     * The graphical [css filter](https://developer.mozilla.org/en-US/docs/Web/CSS/filter)operation applied to the features that meet the [filter](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#filter) requirements.At 4.11, [grayscale](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/grayscale),[sepia](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/sepia),[hue-rotate](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/sepia),[invert](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/invert),[opacity](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/opacity),[brightness](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/brightness) and[contrast](https://developer.mozilla.org/en-US/docs/Web/CSS/filter-function/contrast)css filter functions are supported.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-support-FeatureEffect.html#outsideEffect)
      */
@@ -44317,7 +44687,7 @@ declare namespace __esri {
      */
     clone(): FeatureFilter;
 
-    toQuery(): void;
+    createQuery(): void;
   }
 
   interface FeatureFilterConstructor {
@@ -44779,6 +45149,8 @@ declare namespace __esri {
   }
 
   export interface MapViewKeyUpEvent {
+    key: string;
+
     native: any;
 
     stopPropagation: Function;
@@ -45902,6 +46274,8 @@ declare namespace __esri {
   }
 
   export interface SceneViewKeyUpEvent {
+    key: string;
+
     native: any;
 
     stopPropagation: Function;
@@ -58384,14 +58758,6 @@ declare namespace __esri {
     view: MapView;
 
     /**
-     * Highlight graphics being created / updated in 3d.
-     *
-     * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-widgets-Sketch-SketchViewModel.html#_sceneViewHighlightHandles)
-     *
-     *
-     */
-    _sceneViewHighlightHandles(): void;
-    /**
      * Cancels the active operation and fires the [create](https://developers.arcgis.com/javascript/latest/api-reference/esri-widgets-Sketch-SketchViewModel.html#event:create) or [update](https://developers.arcgis.com/javascript/latest/api-reference/esri-widgets-Sketch-SketchViewModel.html#event:update) eventand changes the event's state to `cancel`.
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-widgets-Sketch-SketchViewModel.html#cancel)
@@ -59604,6 +59970,8 @@ declare namespace __esri {
      *
      */
     postInitialize(): void;
+
+    render(): object;
     /**
      * Renders widget to the DOM immediately.
      *
