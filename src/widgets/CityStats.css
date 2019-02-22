@@ -1,0 +1,68 @@
+
+.widgets-citystats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.widgets-citystats .widgets-citystats--cardBlue {
+  padding: 12px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 4px;
+  margin: 6px;
+
+  background: #00c0f0;
+
+}
+
+.widgets-citystats .widgets-citystats--cardGreen {
+  padding: 12px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 4px;
+  margin: 6px;
+
+  background: #85e800;
+}
+
+.widgets-citystats .widgets-citystats--cardOrange {
+  padding: 12px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 4px;
+  margin: 6px;
+
+  background: #ffc415;
+}
+
+.widgets-citystats .widgets-citystats--cardPurple {
+  padding: 12px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 4px;
+  margin: 6px;
+
+  background: #9b4ba6;
+}
+
+.widgets-citystats .widgets-citystats--cardtitle {
+  line-height: 20px;
+  color: white;
+  font-size: 125%;
+}
+
+.widgets-citystats .widgets-citystats--cardvalue {
+  line-height: 80px;
+  font-size: 400%;
+  color: white;
+}

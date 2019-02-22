@@ -23,36 +23,43 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CSS = {
-        base: "widgets-header",
-        actionContent: "widgets-header--actionContent",
-        label: "widgets-header--label"
+        base: "widgets-hurricaneinfo",
+        background: "widgets-hurricaneinfo--background",
+        modal: "widgets-hurricaneinfo--modal",
+        visible: "widgets-hurricaneinfo--visible",
+        hurricaneName: "widgets-hurricaneinfo--hurricane-name",
+        hurricaneSeason: "widgets-hurricaneinfo--hurricane-season",
+        hurricaneMaxWind: "widgets-hurricaneinfo--hurricane-maxwind",
+        hurricaneInfo: "widgets-hurricaneinfo--info",
     };
-    var Header = /** @class */ (function (_super) {
-        __extends(Header, _super);
-        function Header(props) {
-            var _this = _super.call(this, props) || this;
-            _this.title = "";
-            return _this;
+    var HurricaneInfo = /** @class */ (function (_super) {
+        __extends(HurricaneInfo, _super);
+        function HurricaneInfo() {
+            return _super !== null && _super.apply(this, arguments) || this;
         }
-        Header.prototype.render = function () {
-            var classes = {};
-            return (widget_1.tsx("div", { bind: this, class: CSS.base, classes: classes },
-                widget_1.tsx("div", { class: CSS.label }, this.title),
-                widget_1.tsx("div", { class: CSS.actionContent }, this.actionContent && this.actionContent.map(function (content) { return content.render(); }))));
+        HurricaneInfo.prototype.render = function () {
+            var _a;
+            var classes = (_a = {},
+                _a[CSS.visible] = this.hurricane != null,
+                _a);
+            var hurricane = this.hurricane;
+            var renderedHurricanes = !hurricane ? null : (widget_1.tsx("div", { class: CSS.modal },
+                widget_1.tsx("div", { class: CSS.hurricaneInfo },
+                    widget_1.tsx("div", { class: CSS.hurricaneSeason }, hurricane.season),
+                    widget_1.tsx("div", { class: CSS.hurricaneMaxWind }, Math.round(hurricane.maxWind * 1.852) + " km/h")),
+                widget_1.tsx("div", { class: CSS.hurricaneName }, hurricane.name)));
+            return (widget_1.tsx("div", { bind: this, classes: classes, class: CSS.base },
+                widget_1.tsx("div", { class: CSS.background }, renderedHurricanes)));
         };
         __decorate([
             decorators_1.property(),
             widget_1.renderable()
-        ], Header.prototype, "title", void 0);
-        __decorate([
-            decorators_1.property(),
-            widget_1.renderable()
-        ], Header.prototype, "actionContent", void 0);
-        Header = __decorate([
-            decorators_1.subclass("widgets.Header")
-        ], Header);
-        return Header;
+        ], HurricaneInfo.prototype, "hurricane", void 0);
+        HurricaneInfo = __decorate([
+            decorators_1.subclass("widgets.HurricaneInfo")
+        ], HurricaneInfo);
+        return HurricaneInfo;
     }(decorators_1.declared(Widget)));
-    exports.default = Header;
+    exports.default = HurricaneInfo;
 });
-//# sourceMappingURL=Header.js.map
+//# sourceMappingURL=HurricaneInfo.js.map

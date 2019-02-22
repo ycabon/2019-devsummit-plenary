@@ -1,0 +1,14 @@
+{
+  "name": "2019-devsummit-plenary",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Yann Cabon",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "devDependencies": {
+    "typescript": "^3.3.3"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+		"module": "amd",
+		"target": "es5",
+		"baseUrl": "node_modules",
+		"moduleResolution": "node",
+    "jsx": "react",
+    "jsxFactory": "tsx",
+		"declaration": false,
+    "experimentalDecorators": true,
+    "noEmitHelpers": false,
+    "noImplicitAny": true,
+    "strictNullChecks": false,
+		"noImplicitThis": true,
+		"sourceMap": true,
+		"removeComments": false,
+		"lib": [
+			"dom",
+			"es5",
+			"es2015.iterable",
+			"es2015.promise",
+			"es2015.symbol",
+			"es2015.symbol.wellknown"
+		]
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
+    "./typings/**/*.d.ts"
+  ]
+}

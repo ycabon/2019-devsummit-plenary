@@ -1,0 +1,59 @@
+.widgets-toggleiconbutton {
+  width: auto;
+  border-radius: 4px;
+  padding-top: 10px;
+  padding-left: 12px;
+  padding-right: 12px;
+
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  align-content: center;
+}
+
+.widgets-toggleiconbutton.esri-disabled {
+  opacity: 0.3;
+  user-select: none;
+  pointer-events: none;
+}
+
+.widgets-toggleiconbutton--content {
+  order: 1;
+  flex: 1 1 100%;
+}
+
+.widgets-toggleiconbutton--content > .esri-icon ~ span {
+  margin-left: 8px;
+}
+
+.widgets-toggleiconbutton--indicator {
+  order: 2;
+  flex: 1 1 100%;
+  height: 0px;
+
+  transition: 300ms all;
+
+  opacity: 0;
+  border-bottom: 5px solid;
+
+  border-image: linear-gradient(
+    to right,
+    transparent 20%,
+    rgba(0, 192, 240, .5) 40%,
+    rgba(0, 192, 240, 1) 49%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(0, 192, 240, 1) 51%,
+    rgba(0, 192, 240, .5) 60%,
+    transparent 80%
+  ) 30;
+
+  filter: blur(1px);
+  margin-bottom: -3px;
+}
+
+.widgets-toggleiconbutton--toggled .widgets-toggleiconbutton--indicator {
+  opacity: 1;
+}

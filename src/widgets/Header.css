@@ -1,0 +1,54 @@
+
+.widgets-header {
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 64px;
+
+  background: linear-gradient(
+    to right,
+    rgba(00, 00, 00, 0.8) 0%,
+    rgba(00, 00, 00, 0.8) 200px,
+    rgba(00, 00, 00, 0) 75%
+  );
+  pointer-events: none;
+
+  border-bottom: 1px dotted;
+  border-image: linear-gradient(
+    to right,
+    rgba(104, 104, 104, 1),
+    rgba(104, 104, 104, 1) 200px,
+    rgba(104, 104, 104, 0) 75%
+  ) 30;
+
+  display: flex;
+  direction: row;
+  align-items: center;
+
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.widgets-header .widgets-header--label {
+  flex: 1 1 100%;
+  order: 1;
+
+  font-family: "Avenir Next W00","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 32px;
+  color: white;
+
+  align-self: flex-end;
+}
+
+.widgets-header .widgets-header--actionContent {
+  flex: 0 0 auto;
+  order: 1;
+
+  display: flex;
+  flex-direction: row;
+}
+
+.widgets-header .widgets-header--actionContent > * {
+  margin-left: 8px;
+}

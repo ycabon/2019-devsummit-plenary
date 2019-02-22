@@ -1,0 +1,73 @@
+
+/* overrides */
+.esri-component.widgets-hurricaneinfo {
+  user-select: none;
+  pointer-events: none;
+}
+
+.widgets-hurricaneinfo {
+  display: flex;
+  flex: 1 1 100%;
+
+  opacity: 0;
+  transition: 250ms all;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  padding-bottom: 77px;
+
+  transition: 1s all;
+}
+
+.widgets-hurricaneinfo--visible {
+  opacity: 1;
+}
+
+.widgets-hurricaneinfo--background {
+  flex: 1 1 100%;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.widgets-hurricaneinfo--modal {
+  padding: 12px;
+
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 0px 15px 40px 0px rgba(0, 0, 0, 0.8);
+  border-radius: 4px;
+
+  display: flex;
+  flex-direction: column;
+
+  font-family: "Avenir Next W00","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.widgets-hurricaneinfo--hurricane-name {
+  color: #00c0f0;
+  font-size: 250%;
+  min-width: 300px;
+  text-align: center;
+}
+
+.widgets-hurricaneinfo--hurricane-season {
+  color: #00c0f0;
+  opacity: 75%;
+  font-size: 100%;
+}
+
+.widgets-hurricaneinfo--hurricane-maxwind {
+  color: white;
+  font-size: 100%;
+}
+
+.widgets-hurricaneinfo--info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex: 1 1 auto;
+}
