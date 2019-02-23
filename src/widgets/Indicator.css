@@ -1,0 +1,36 @@
+
+.esri-widget.widgets-indicator {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+
+  display: flex;
+  border-radius: 4px;
+
+  width: 300px;
+  height: 150px;
+
+  padding: 12px 15px;
+
+  background-color: #ff642e;
+}
+
+.esri-widget.widgets-indicator .widgets-indicator--title-wrapper {
+  flex-grow: 0;
+}
+
+.esri-widget.widgets-indicator .widgets-indicator--value-wrapper {
+  flex-grow: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.esri-widget.widgets-indicator .widgets-indicator--value {
+  flex-grow: 0;
+  font-size: 400%;
+
+  font-feature-settings: "tnum", "zero";
+  font-variant-numeric: tabular-nums;
+}

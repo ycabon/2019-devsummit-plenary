@@ -1,0 +1,59 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.application {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  background: #1d2225;
+}
+
+.mapping {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.esri-widget.no-background {
+  background: none;
+  background-color: transparent;
+  backdrop-filter: none;
+}
+
+.ui {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+
+  display: flex;
+}
+
+.ui .left-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 15px;
+  width: 300px;
+  background: rgba(0, 0, 0, .5);
+  backdrop-filter: blur(5px) contrast(200%);
+}
+
+.ui .right-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 15px;
+  width: 300px;
+  background: rgba(0, 0, 0, .5);
+  backdrop-filter: blur(5px) contrast(200%);
+}
+
