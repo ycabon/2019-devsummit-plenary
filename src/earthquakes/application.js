@@ -33,14 +33,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/views/MapView", "esri/layers/GeoJSONLayer", "esri/WebMap", "esri/renderers", "esri/symbols"], function (require, exports, MapView, GeoJSONLayer, WebMap, renderers_1, symbols_1) {
+define(["require", "exports", "esri/views/MapView", "esri/layers/GeoJSONLayer", "esri/renderers/visualVariables/SizeVariable", "esri/WebMap", "esri/renderers", "esri/symbols"], function (require, exports, MapView, GeoJSONLayer, SizeVariable, WebMap, renderers_1, symbols_1) {
     "use strict";
     var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
+    var view;
     (function () { return __awaiter(_this, void 0, void 0, function () {
-        var geojsonLayer, map, view;
+        var layer, map;
         return __generator(this, function (_a) {
-            geojsonLayer = new GeoJSONLayer({
+            layer = new GeoJSONLayer({
                 url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
                 title: "USGS Earthquakes",
                 copyright: "USGS",
@@ -51,25 +52,68 @@ define(["require", "exports", "esri/views/MapView", "esri/layers/GeoJSONLayer", 
                         expression: "Geometry($feature).z * -1"
                     }
                 },
-                renderer: new renderers_1.SimpleRenderer({
-                    symbol: new symbols_1.SimpleMarkerSymbol({
-                        color: "dodgerblue",
+                renderer: new renderers_1.UniqueValueRenderer({
+                    valueExpression: "\n        var eqTime = $feature.time;\n        var timeDiff = DateDiff ( now() , eqTime , 'hours' );\n        var returnString = When(\n            timeDiff <= 1, \"hour\",\n            timeDiff > 1 && timeDiff <= 24, \"day\",\n            timeDiff > 24, \"week\", \"other\"\n        );\n      ",
+                    defaultSymbol: new symbols_1.SimpleMarkerSymbol({
+                        color: "black",
                         size: "10px",
                         outline: {
                             width: "1px",
                             color: "white"
                         }
-                    })
+                    }),
+                    defaultLabel: "Not Reported",
+                    uniqueValueInfos: [{
+                            value: "hour",
+                            label: "Last Hour",
+                            symbol: new symbols_1.SimpleMarkerSymbol({
+                                color: [255, 0, 0, 0.5],
+                                outline: {
+                                    color: [255, 255, 255, 0.25]
+                                }
+                            }),
+                        }, {
+                            value: "day",
+                            label: "Last Day",
+                            symbol: new symbols_1.SimpleMarkerSymbol({
+                                color: [230, 152, 0, 0.5],
+                                outline: {
+                                    color: [255, 255, 255, 0.25]
+                                }
+                            }),
+                        }, {
+                            value: "week",
+                            label: "Last Week",
+                            symbol: new symbols_1.SimpleMarkerSymbol({
+                                color: [140, 140, 131, 0.25],
+                                outline: {
+                                    color: [255, 255, 255, 0.25]
+                                }
+                            }),
+                        }],
+                    visualVariables: [
+                        new SizeVariable({
+                            field: "mag",
+                            legendOptions: {
+                                title: "Magnitude"
+                            },
+                            stops: [{
+                                    value: 2.5,
+                                    size: 4,
+                                    label: "> 2.5"
+                                }, {
+                                    value: 7,
+                                    size: 40,
+                                    label: "> 7"
+                                }]
+                        })
+                    ]
                 })
             });
             map = new WebMap({
-                basemap: {
-                    portalItem: {
-                        id: "58c4506214f3433788f4bcbd86ca1238"
-                    }
-                },
+                basemap: "oceans",
                 ground: "world-topobathymetry",
-                layers: [geojsonLayer]
+                layers: [layer]
             });
             view = new MapView({
                 container: "viewDiv",
