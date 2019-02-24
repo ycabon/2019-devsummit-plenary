@@ -166,7 +166,7 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                     view.highlightOptions = {
                         fillOpacity: 0,
                         color: "white",
-                        haloOpacity: 1,
+                        haloOpacity: 1
                     };
                     highlight = null;
                     view.on("click", function (event) { return __awaiter(_this, void 0, void 0, function () {

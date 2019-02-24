@@ -132,8 +132,7 @@ let view: MapView;
   view.highlightOptions = {
     fillOpacity: 0,
     color: "white" as any,
-    haloOpacity: 1,
-
+    haloOpacity: 1
   };
   let highlight: IHandle = null;
 
