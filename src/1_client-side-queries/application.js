@@ -33,14 +33,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "esri/layers/Layer", "esri/WebMap", "esri/tasks/support/StatisticDefinition", "../widgets/Header"], function (require, exports, PortalItem, MapView, Layer, WebMap, StatisticDefinition, Header_1) {
+define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "esri/layers/Layer", "esri/WebMap", "esri/tasks/support/StatisticDefinition", "../widgets/Header", "esri/symbols", "esri/renderers"], function (require, exports, PortalItem, MapView, Layer, WebMap, StatisticDefinition, Header_1, symbols_1, renderers_1) {
     "use strict";
     var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
     var mobile = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod/i);
     var view;
     (function () { return __awaiter(_this, void 0, void 0, function () {
-        var map, layer, _a, Legend, Zoom, Home, Indicator, zoom, home, indicator;
+        var map, layer, _a, Legend, Zoom, Home, Indicator, zoom, home, indicator, counties, countiesLayerView, highlight;
         var _this = this;
         return __generator(this, function (_b) {
             switch (_b.label) {
@@ -145,6 +145,53 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                     view.ui.add(new Header_1.default({
                         title: "Client-side queries"
                     }));
+                    return [4 /*yield*/, Layer.fromPortalItem({
+                            portalItem: new PortalItem({
+                                id: "48f9af87daa241c4b267c5931ad3b226"
+                            })
+                        })];
+                case 5:
+                    counties = _b.sent();
+                    counties.outFields = ["NAME"];
+                    counties.renderer = new renderers_1.SimpleRenderer({
+                        symbol: new symbols_1.SimpleFillSymbol({
+                            color: "rgba(0,0,0,0.05)",
+                            outline: null
+                        })
+                    });
+                    view.map.add(counties);
+                    return [4 /*yield*/, view.whenLayerView(counties)];
+                case 6:
+                    countiesLayerView = _b.sent();
+                    view.highlightOptions = {
+                        fillOpacity: 0,
+                        color: "white",
+                        haloOpacity: 1,
+                    };
+                    highlight = null;
+                    view.on("click", function (event) { return __awaiter(_this, void 0, void 0, function () {
+                        var point, result, graphic;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    point = view.toMap(event);
+                                    return [4 /*yield*/, countiesLayerView.queryFeatures({
+                                            geometry: point,
+                                            outFields: [counties.objectIdField, "NAME"]
+                                        })];
+                                case 1:
+                                    result = _a.sent();
+                                    highlight && highlight.remove();
+                                    indicator.geometry = null;
+                                    if (result.features[0]) {
+                                        graphic = result.features[0];
+                                        highlight = countiesLayerView.highlight(graphic);
+                                        indicator.geometry = graphic.geometry;
+                                    }
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); });
                     return [2 /*return*/];
             }
         });

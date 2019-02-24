@@ -44,8 +44,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             var updateCallback = function () { return _this.updateStatistics(); };
             this.own([
                 watchUtils_1.whenFalse(this, "view.updating", updateCallback),
-                watchUtils_1.watch(this, "view.extent", updateCallback),
-                watchUtils_1.watch(this, "statisticDefinition", updateCallback)
+                watchUtils_1.watch(this, ["view.extent", "statisticDefinition", "geometry"], updateCallback)
             ]);
         };
         Indicator.prototype.updateStatistics = function () {
@@ -81,7 +80,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             else {
                 layerView = this.view.allLayerViews.find(function (layerView) { return layerView.layer === _this.layer; });
             }
-            this._statsPromise = this.queryStatistics(layerView, this.view.extent)
+            this._statsPromise = this.queryStatistics(layerView, this.geometry || this.view.extent)
                 .then(function (value) {
                 _this.value = value;
                 _this._statsPromise = null;
@@ -128,6 +127,9 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
         __decorate([
             decorators_1.property()
         ], Indicator.prototype, "view", void 0);
+        __decorate([
+            decorators_1.property()
+        ], Indicator.prototype, "geometry", void 0);
         Indicator = __decorate([
             decorators_1.subclass("widgets.Indicator")
         ], Indicator);

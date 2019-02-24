@@ -13,7 +13,7 @@ import CSVLayer = require("esri/layers/CSVLayer");
 import StatisticDefinition = require("esri/tasks/support/StatisticDefinition");
 import MapView = require("esri/views/MapView");
 import FeatureLayerView = require("esri/views/layers/FeatureLayerView");
-import { Extent } from "esri/geometry";
+import { Extent, Polygon } from "esri/geometry";
 
 const CSS = {
   base: "widgets-indicator esri-widget",
@@ -41,7 +41,7 @@ export default class Indicator extends declared(Widget) {
   format: Intl.NumberFormat;
 
   @property()
-  queryStatistics: (layerView: FeatureLayerView, geometry: Extent) => Promise<number>;
+  queryStatistics: (layerView: FeatureLayerView, geometry: Extent | Polygon) => Promise<number>;
 
   @property()
   layer: GroupLayer | FeatureLayer | CSVLayer | GeoJSONLayer;
@@ -57,12 +57,14 @@ export default class Indicator extends declared(Widget) {
   @property()
   view: MapView;
 
+  @property()
+  geometry: Extent | Polygon;
+
   postInitialize() {
     const updateCallback = () => this.updateStatistics();
     this.own([
       whenFalse(this, "view.updating", updateCallback),
-      watch(this, "view.extent", updateCallback),
-      watch(this, "statisticDefinition", updateCallback)
+      watch(this, ["view.extent", "statisticDefinition", "geometry"], updateCallback)
     ])
   }
 
@@ -97,7 +99,7 @@ export default class Indicator extends declared(Widget) {
       layerView = this.view.allLayerViews.find(layerView => layerView.layer === this.layer) as FeatureLayerView;
     }
 
-    this._statsPromise = this.queryStatistics(layerView, this.view.extent)
+    this._statsPromise = this.queryStatistics(layerView, this.geometry || this.view.extent)
       .then((value) => {
         this.value = value;
 

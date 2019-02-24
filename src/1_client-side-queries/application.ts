@@ -5,7 +5,11 @@ import GroupLayer = require("esri/layers/GroupLayer");
 import FeatureLayer = require("esri/layers/FeatureLayer");
 import WebMap = require("esri/WebMap");
 import StatisticDefinition = require("esri/tasks/support/StatisticDefinition");
+import FeatureLayerView = require("esri/views/layers/FeatureLayerView");
 import Header from "../widgets/Header";
+import { SimpleFillSymbol } from "esri/symbols";
+import { Polygon } from "esri/geometry";
+import { SimpleRenderer } from "esri/renderers";
 
 const mobile = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod/i);
 
@@ -110,4 +114,43 @@ let view: MapView;
   view.ui.add(new Header({
     title: "Client-side queries"
   }));
+
+  const counties = await Layer.fromPortalItem({
+    portalItem: new PortalItem({
+      id: "48f9af87daa241c4b267c5931ad3b226"
+    })
+  }) as FeatureLayer;
+  counties.outFields = ["NAME"];
+  counties.renderer = new SimpleRenderer({
+    symbol: new SimpleFillSymbol({
+      color: "rgba(0,0,0,0.05)",
+      outline: null
+    })
+  });
+  view.map.add(counties);
+  const countiesLayerView = await view.whenLayerView(counties) as FeatureLayerView;
+  view.highlightOptions = {
+    fillOpacity: 0,
+    color: "white" as any,
+    haloOpacity: 1,
+
+  };
+  let highlight: IHandle = null;
+
+  view.on("click", async (event) => {
+    const point = view.toMap(event);
+    const result = await countiesLayerView.queryFeatures({
+      geometry: point,
+      outFields: [counties.objectIdField, "NAME"]
+    });
+
+    highlight && highlight.remove();
+    indicator.geometry = null;
+
+    if (result.features[0]) {
+      const graphic = result.features[0];
+      highlight = countiesLayerView.highlight(graphic);
+      indicator.geometry = graphic.geometry as Polygon;
+    }
+  })
 })();
