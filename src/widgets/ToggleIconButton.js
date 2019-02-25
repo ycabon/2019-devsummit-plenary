@@ -23,7 +23,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CSS = {
-        button: "esri-widget-button esri-widget widgets-toggleiconbutton",
+        button: "esri-widget-button esri-component esri-widget widgets-toggleiconbutton",
         disabled: "esri-disabled",
         interactive: "esri-interactive",
         icon: "esri-icon",

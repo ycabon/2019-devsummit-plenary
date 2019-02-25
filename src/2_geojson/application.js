@@ -1,3 +1,14 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -33,242 +44,360 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/renderers", "esri/symbols", "../widgets/Header", "esri/layers/GeoJSONLayer", "esri/renderers/visualVariables/SizeVariable"], function (require, exports, MapView, WebMap, renderers_1, symbols_1, Header_1, GeoJSONLayer, SizeVariable) {
+define(["require", "exports", "esri/views/MapView", "esri/views/SceneView", "esri/WebMap", "esri/WebScene", "esri/renderers", "esri/symbols", "../widgets/Header", "../widgets/IconButton", "../widgets/Slider", "../widgets/ToggleIconButton", "esri/support/actions/ActionButton", "esri/layers/GeoJSONLayer", "esri/renderers/visualVariables/SizeVariable", "esri/widgets/Expand", "esri/renderers/smartMapping/statistics/histogram", "esri/views/layers/support/FeatureFilter"], function (require, exports, MapView, SceneView, WebMap, WebScene, renderers_1, symbols_1, Header_1, IconButton_1, Slider_1, ToggleIconButton_1, ActionButton, GeoJSONLayer, SizeVariable, Expand, histogram, FeatureFilter) {
     "use strict";
     var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
-    var view;
-    (function () { return __awaiter(_this, void 0, void 0, function () {
-        var layer, map, _a, Legend, Zoom, Home, Indicator, zoom, home;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    layer = new GeoJSONLayer({
-                        url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
-                        title: "USGS Earthquakes",
-                        copyright: "USGS",
-                        fields: [
-                            {
-                                "name": "mag",
-                                "type": "double"
-                            },
-                            {
-                                "name": "place",
-                                "type": "string"
-                            },
-                            {
-                                "name": "time",
-                                "type": "date"
-                            },
-                            {
-                                "name": "updated",
-                                "type": "date"
-                            },
-                            {
-                                "name": "tz",
-                                "type": "double"
-                            },
-                            {
-                                "name": "url",
-                                "type": "string"
-                            },
-                            {
-                                "name": "detail",
-                                "type": "string"
-                            },
-                            {
-                                "name": "status",
-                                "type": "string"
-                            },
-                            {
-                                "name": "tsunami",
-                                "type": "double"
-                            },
-                            {
-                                "name": "sig",
-                                "type": "double"
-                            },
-                            {
-                                "name": "net",
-                                "type": "string"
-                            },
-                            {
-                                "name": "code",
-                                "type": "string"
-                            },
-                            {
-                                "name": "ids",
-                                "type": "string"
-                            },
-                            {
-                                "name": "sources",
-                                "type": "string"
-                            },
-                            {
-                                "name": "types",
-                                "type": "string"
-                            },
-                            {
-                                "name": "nst",
-                                "type": "double"
-                            },
-                            {
-                                "name": "dmin",
-                                "type": "double"
-                            },
-                            {
-                                "name": "rms",
-                                "type": "double"
-                            },
-                            {
-                                "name": "gap",
-                                "type": "double"
-                            },
-                            {
-                                "name": "magType",
-                                "type": "string"
-                            },
-                            {
-                                "name": "type",
-                                "type": "string"
-                            },
-                            {
-                                "name": "title",
-                                "type": "string"
-                            },
-                            {
-                                "name": "felt",
-                                "type": "double"
-                            },
-                            {
-                                "name": "cdi",
-                                "type": "double"
-                            },
-                            {
-                                "name": "mmi",
-                                "type": "double"
-                            },
-                            {
-                                "name": "alert",
-                                "type": "string"
-                            }
-                        ],
-                        elevationInfo: {
-                            mode: "absolute-height",
-                            unit: "kilometers",
-                            featureExpressionInfo: {
-                                expression: "Geometry($feature).z * -1"
-                            }
-                        },
-                        renderer: new renderers_1.UniqueValueRenderer({
-                            valueExpression: "\n        var eqTime = $feature.time;\n        var timeDiff = DateDiff(now(), eqTime, 'hours');\n        return When(\n          timeDiff <= 1, \"hour\",\n          timeDiff > 1 && timeDiff <= 24, \"day\",\n          timeDiff > 24, \"week\", \"other\"\n        );\n      ",
-                            defaultSymbol: new symbols_1.SimpleMarkerSymbol({
-                                color: "black",
-                                size: "10px",
-                                outline: {
-                                    width: "1px",
-                                    color: "white"
-                                }
-                            }),
-                            defaultLabel: "Not Reported",
-                            uniqueValueInfos: [{
-                                    value: "hour",
-                                    label: "Last Hour",
-                                    symbol: new symbols_1.SimpleMarkerSymbol({
-                                        color: [255, 0, 0, 0.5],
-                                        outline: {
-                                            color: [255, 255, 255, 0.25]
-                                        }
-                                    }),
-                                }, {
-                                    value: "day",
-                                    label: "Last Day",
-                                    symbol: new symbols_1.SimpleMarkerSymbol({
-                                        color: [230, 152, 0, 0.5],
-                                        outline: {
-                                            color: [255, 255, 255, 0.25]
-                                        }
-                                    }),
-                                }, {
-                                    value: "week",
-                                    label: "Last Week",
-                                    symbol: new symbols_1.SimpleMarkerSymbol({
-                                        color: [140, 140, 131, 0.25],
-                                        outline: {
-                                            color: [255, 255, 255, 0.25]
-                                        }
-                                    }),
-                                }],
-                            visualVariables: [
-                                new SizeVariable({
-                                    field: "mag",
-                                    legendOptions: {
-                                        title: "Magnitude"
-                                    },
-                                    stops: [{
-                                            value: 2.5,
-                                            size: 4,
-                                            label: "> 2.5"
-                                        },
-                                        {
-                                            value: 7,
-                                            size: 40,
-                                            label: "> 7"
-                                        }]
-                                })
-                            ]
+    var map;
+    var scene;
+    var mapView;
+    var sceneView;
+    var visibleView;
+    function createLayer() {
+        return new GeoJSONLayer({
+            url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
+            title: "USGS Earthquakes",
+            copyright: "USGS",
+            // timeInfo: {
+            //   endTimeFie
+            // },
+            fields: [
+                {
+                    "name": "mag",
+                    "type": "double"
+                },
+                {
+                    "name": "place",
+                    "type": "string"
+                },
+                {
+                    "name": "time",
+                    "type": "double"
+                },
+                {
+                    "name": "url",
+                    "type": "string"
+                },
+                {
+                    "name": "detail",
+                    "type": "string"
+                },
+                {
+                    "name": "tsunami",
+                    "type": "double"
+                },
+                {
+                    "name": "ids",
+                    "type": "string"
+                },
+                {
+                    "name": "magType",
+                    "type": "string"
+                },
+                {
+                    "name": "type",
+                    "type": "string"
+                },
+                {
+                    "name": "title",
+                    "type": "string"
+                },
+                {
+                    "name": "felt",
+                    "type": "double"
+                }
+            ],
+            elevationInfo: {
+                mode: "absolute-height",
+                unit: "kilometers",
+                featureExpressionInfo: {
+                    expression: "Geometry($feature).z * -1"
+                }
+            },
+            popupTemplate: {
+                title: "{title}",
+                content: "\n        Earthquake of magnitude {mag} on {time}.<br />\n      ",
+                outFields: ["url"],
+                actions: [
+                    new ActionButton({
+                        id: "more-details",
+                        title: "More details"
+                    })
+                ]
+            },
+            renderer: new renderers_1.ClassBreaksRenderer({
+                field: "mag",
+                classBreakInfos: [
+                    {
+                        minValue: -10,
+                        maxValue: 1,
+                        symbol: new symbols_1.PictureMarkerSymbol({
+                            url: "src/2_geojson/Mag2.png"
                         })
-                    });
-                    map = new WebMap({
-                        basemap: "oceans",
-                        ground: "world-topobathymetry",
-                        layers: [layer]
-                    });
-                    view = new MapView({
-                        container: "viewDiv",
-                        center: [-180, 40],
-                        zoom: 3,
-                        map: map,
-                        padding: {
-                            right: 330
+                    },
+                    {
+                        minValue: 1,
+                        maxValue: 4,
+                        symbol: new symbols_1.PictureMarkerSymbol({
+                            url: "src/2_geojson/Mag3.png"
+                        })
+                    },
+                    {
+                        minValue: 4,
+                        maxValue: 5,
+                        symbol: new symbols_1.PictureMarkerSymbol({
+                            url: "src/2_geojson/Mag4.png"
+                        })
+                    },
+                    {
+                        minValue: 5,
+                        maxValue: 6,
+                        symbol: new symbols_1.PictureMarkerSymbol({
+                            url: "src/2_geojson/Mag5.png"
+                        })
+                    },
+                    {
+                        minValue: 6,
+                        maxValue: 7,
+                        symbol: new symbols_1.PictureMarkerSymbol({
+                            url: "src/2_geojson/Mag6.png"
+                        })
+                    },
+                    {
+                        minValue: 7,
+                        maxValue: 10,
+                        symbol: new symbols_1.PictureMarkerSymbol({
+                            url: "src/2_geojson/Mag7.png"
+                        })
+                    }
+                ],
+                visualVariables: [
+                    new SizeVariable({
+                        field: "mag",
+                        legendOptions: {
+                            title: "Magnitude",
+                            showLegend: false
                         },
-                        ui: {
-                            components: ["attribution"]
-                        }
-                        // popup: null
-                    });
-                    map.add(layer);
-                    return [4 /*yield*/, view.whenLayerView(layer)];
-                case 1:
-                    _b.sent();
-                    layer.popupTemplate = layer.createPopupTemplate();
-                    return [4 /*yield*/, Promise.all([
+                        stops: [{
+                                value: 2.5,
+                                size: 12,
+                                label: "> 2.5"
+                            },
+                            {
+                                value: 7,
+                                size: 40
+                            },
+                            {
+                                value: 8,
+                                size: 80,
+                                label: "> 8"
+                            }]
+                    })
+                ]
+            })
+        });
+    }
+    (function () { return __awaiter(_this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            map = new WebMap({
+                basemap: { portalItem: { id: "39858979a6ba4cfd96005bbe9bd4cf82" } },
+                layers: [createLayer()]
+            });
+            scene = new WebScene({
+                basemap: { portalItem: { id: "39858979a6ba4cfd96005bbe9bd4cf82" } },
+                ground: "world-topo",
+                layers: [createLayer()]
+            });
+            visibleView = mapView = new MapView({
+                container: "viewContainer",
+                center: [-180, 40],
+                zoom: 3,
+                map: map,
+                ui: {
+                    components: ["attribution"]
+                }
+            });
+            sceneView = new SceneView({
+                map: scene,
+                qualityProfile: "high",
+                // viewingMode: "local",
+                ui: {
+                    padding: {
+                        top: 80
+                    },
+                    components: ["attribution"]
+                },
+                environment: {
+                    background: {
+                        type: "color",
+                        color: "black"
+                    },
+                    starsEnabled: false,
+                    atmosphereEnabled: false
+                }
+            });
+            scene.ground.navigationConstraint = {
+                type: "none"
+            };
+            setupUI(mapView);
+            setupUI(sceneView);
+            setupSliders(map.layers.getItemAt(0));
+            sceneView.ui.add(new Expand({
+                content: new Slider_1.default({
+                    min: 0,
+                    max: 1,
+                    step: 0.1,
+                    value: 1,
+                    title: "Ground opacity",
+                    action: function (value) {
+                        scene.ground.opacity = value;
+                    }
+                })
+            }), "top-left");
+            return [2 /*return*/];
+        });
+    }); })();
+    function setupUI(view) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a, Legend, Zoom, Home, Indicator, zoom, home;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0: return [4 /*yield*/, Promise.all([
                             new Promise(function (resolve_1, reject_1) { require(["esri/widgets/Legend"], resolve_1, reject_1); }),
                             new Promise(function (resolve_2, reject_2) { require(["esri/widgets/Zoom"], resolve_2, reject_2); }),
                             new Promise(function (resolve_3, reject_3) { require(["esri/widgets/Home"], resolve_3, reject_3); }),
                             new Promise(function (resolve_4, reject_4) { require(["../widgets/Indicator"], resolve_4, reject_4); })
                         ])];
-                case 2:
-                    _a = _b.sent(), Legend = _a[0], Zoom = _a[1], Home = _a[2], Indicator = _a[3].default;
-                    zoom = new Zoom({
-                        view: view,
-                        layout: "horizontal"
-                    });
-                    home = new Home({
-                        view: view
-                    });
-                    view.ui.add(zoom, "bottom-left");
-                    view.ui.add(home, "bottom-left");
-                    new Legend({
-                        container: "legend",
-                        view: view
-                    });
-                    view.ui.add(new Header_1.default({
-                        title: "GeoJSON"
-                    }));
-                    return [2 /*return*/];
-            }
+                    case 1:
+                        _a = _b.sent(), Legend = _a[0], Zoom = _a[1], Home = _a[2], Indicator = _a[3].default;
+                        zoom = new Zoom({
+                            view: view,
+                            layout: "horizontal"
+                        });
+                        home = new Home({
+                            view: view
+                        });
+                        view.ui.add(zoom, "bottom-left");
+                        view.ui.add(home, "bottom-left");
+                        view.ui.add(new IconButton_1.default({
+                            title: view.type === "2d" ? "3D" : "2D",
+                            action: function () {
+                                var vp = visibleView.viewpoint;
+                                visibleView.container = null;
+                                if (visibleView === mapView) {
+                                    visibleView = sceneView;
+                                }
+                                else {
+                                    visibleView = mapView;
+                                }
+                                visibleView.viewpoint = vp;
+                                visibleView.container = "viewContainer";
+                            }
+                        }), "bottom-left");
+                        view.ui.add(new Header_1.default({
+                            title: "GeoJSON",
+                            actionContent: [
+                                new ToggleIconButton_1.default({
+                                    title: "Filter",
+                                    toggle: function () {
+                                        var panel = document.getElementById("panel");
+                                        panel.classList.toggle("hidden");
+                                    }
+                                })
+                            ]
+                        }));
+                        view.popup.viewModel.on("trigger-action", function (event) {
+                            if (event.action.id === "more-details") {
+                                window.open(view.popup.viewModel.selectedFeature.attributes.url, "_blank");
+                            }
+                        });
+                        return [2 /*return*/];
+                }
+            });
         });
-    }); })();
+    }
+    var filter = new FeatureFilter();
+    function updateFilter() {
+        return __awaiter(this, void 0, void 0, function () {
+            var lv2d, lv3d;
+            return __generator(this, function (_a) {
+                lv2d = mapView.layerViews.getItemAt(0);
+                lv3d = sceneView.layerViews.getItemAt(0);
+                lv2d && (lv2d.filter = filter.clone());
+                lv3d && (lv3d.filter = filter.clone());
+                return [2 /*return*/];
+            });
+        });
+    }
+    function setupSliders(layer) {
+        var magnitudeSlider = setupSlider(layer, document.getElementById("magnitudeSlider"), {
+            field: "mag",
+            minValue: 0,
+            maxValue: 8,
+            numBins: 16
+        });
+        magnitudeSlider.onChange = function (field, minValue, maxValue) {
+            filter.where = "mag >= " + minValue + " AND mag <= " + maxValue;
+            updateFilter();
+        };
+        var timeSlider = setupSlider(layer, document.getElementById("timeSlider"), {
+            field: "time",
+            numBins: 40
+        });
+    }
+    function setupSlider(layer, element, options) {
+        var histogramEl = element.querySelector(".histogram");
+        if (histogramEl) {
+            var histogramElRect_1 = histogramEl.getBoundingClientRect();
+            histogram(__assign({ layer: layer, classificationMethod: "equal-interval" }, options))
+                .then(function (result) {
+                var maxCount = result.bins.reduce(function (max, _a) {
+                    var count = _a.count;
+                    return Math.max(max, count);
+                }, -Infinity);
+                result.bins.forEach(function (bin) {
+                    var bar = document.createElement("div");
+                    var barContent = document.createElement("div");
+                    bar.className = "bar";
+                    bar.appendChild(barContent);
+                    barContent.className = "content";
+                    barContent.style.height = Math.max(1, (bin.count / maxCount) * histogramElRect_1.height) + "px";
+                    histogramEl.appendChild(bar);
+                });
+            });
+        }
+        var minThumb = element.querySelector(".thumb-min");
+        var maxThumb = element.querySelector(".thumb-max");
+        var minValue = element.querySelector(".thumb-min-value");
+        var maxValue = element.querySelector(".thumb-max-value");
+        minThumb.min = maxThumb.min = "" + options.minValue;
+        minThumb.max = maxThumb.max = "" + options.maxValue;
+        var handler = {
+            onChange: null
+        };
+        var onMinChange = function (event) {
+            if (+minThumb.value >= +maxThumb.value) {
+                minThumb.value = "" + (parseFloat(maxThumb.value) - parseFloat(minThumb.step));
+            }
+            if (handler.onChange) {
+                handler.onChange(options.field, parseFloat(minThumb.value), parseFloat(maxThumb.value));
+            }
+            minValue.innerHTML = minThumb.value;
+        };
+        var onMaxChange = function () {
+            if (+minThumb.value >= +maxThumb.value) {
+                maxThumb.value = "" + (parseFloat(minThumb.value) + parseFloat(maxThumb.step));
+            }
+            maxValue.innerHTML = maxThumb.value;
+            if (handler.onChange) {
+                handler.onChange(options.field, parseFloat(minThumb.value), parseFloat(maxThumb.value));
+            }
+        };
+        minThumb.addEventListener("change", onMinChange);
+        minThumb.addEventListener("input", onMinChange);
+        maxThumb.addEventListener("change", onMaxChange);
+        maxThumb.addEventListener("input", onMaxChange);
+        return handler;
+    }
 });
 //# sourceMappingURL=application.js.map

@@ -8,9 +8,9 @@
 
   background: linear-gradient(
     to right,
-    rgba(00, 00, 00, 0.8) 0%,
-    rgba(00, 00, 00, 0.8) 200px,
-    rgba(00, 00, 00, 0) 75%
+    #242424 0%,
+    #242424 200px,
+    #24242466 75%
   );
   pointer-events: none;
 

@@ -16,7 +16,7 @@ import FeatureLayerView = require("esri/views/layers/FeatureLayerView");
 import { Extent, Polygon } from "esri/geometry";
 
 const CSS = {
-  base: "widgets-indicator esri-widget",
+  base: "esri-widget widgets-indicator",
   titleWrapper: "widgets-indicator--title-wrapper",
   title: "widgets-indicator--title",
   valueWrapper: "widgets-indicator--value-wrapper",

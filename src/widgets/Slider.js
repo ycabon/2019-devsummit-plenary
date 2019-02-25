@@ -23,23 +23,14 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CSS = {
-        button: "esri-component esri-widget--button esri-widget widgets-iconbutton",
-        disabled: "esri-disabled",
-        interactive: "esri-interactive",
-        icon: "esri-icon"
+        base: "esri-widget widgets-slider",
+        title: "widgets-slider--title",
+        value: "widgets-slider--value"
     };
-    var IconButton = /** @class */ (function (_super) {
-        __extends(IconButton, _super);
-        function IconButton(props) {
+    var Slider = /** @class */ (function (_super) {
+        __extends(Slider, _super);
+        function Slider(props) {
             var _this = _super.call(this, props) || this;
-            //----------------------------------
-            //  enabled
-            //----------------------------------
-            _this.enabled = true;
-            //----------------------------------
-            //  iconClass
-            //----------------------------------
-            _this.iconClass = "";
             //----------------------------------
             //  title
             //----------------------------------
@@ -51,61 +42,48 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
         //  Public Methods
         //
         //--------------------------------------------------------------------------
-        IconButton.prototype.render = function () {
-            var _a, _b;
-            var tabIndex = this.enabled ? 0 : -1;
-            var rootClasses = (_a = {},
-                _a[CSS.disabled] = !this.enabled,
-                _a[CSS.interactive] = this.enabled,
-                _a);
-            var iconClasses = (_b = {},
-                _b[this.iconClass] = !!this.iconClass,
-                _b);
-            var iconRendered = !this.iconClass ?
-                null :
-                widget_1.tsx("span", { "aria-hidden": "true", role: "presentation", class: CSS.icon, classes: iconClasses });
-            var titleRendered = !this.title ?
-                null :
-                widget_1.tsx("span", null, this.title);
-            return (widget_1.tsx("div", { bind: this, class: CSS.button, classes: rootClasses, onclick: this._triggerAction, onkeydown: this._triggerAction, role: "button", tabIndex: tabIndex, title: this.title },
-                iconRendered,
-                titleRendered));
+        Slider.prototype.render = function () {
+            return (widget_1.tsx("div", { bind: this, class: CSS.base },
+                widget_1.tsx("span", { class: CSS.title }, this.title),
+                widget_1.tsx("input", { bind: this, class: CSS.value, onchange: this._changeHandler, oninput: this._changeHandler, type: "range", min: this.min, max: this.max, step: this.step, value: this.value })));
         };
-        //--------------------------------------------------------------------------
-        //
-        //  Private Methods
-        //
-        //--------------------------------------------------------------------------
-        IconButton.prototype._triggerAction = function () {
-            if (this.enabled) {
-                this.action.call(this);
+        Slider.prototype._changeHandler = function (event) {
+            this.value = parseFloat(event.target.value);
+            if (this.action) {
+                this.action(this.value);
             }
         };
         __decorate([
             decorators_1.property()
-        ], IconButton.prototype, "action", void 0);
+        ], Slider.prototype, "action", void 0);
         __decorate([
             decorators_1.property(),
             widget_1.renderable()
-        ], IconButton.prototype, "enabled", void 0);
-        __decorate([
-            decorators_1.property({
-                readOnly: false
-            }),
-            widget_1.renderable()
-        ], IconButton.prototype, "iconClass", void 0);
+        ], Slider.prototype, "min", void 0);
         __decorate([
             decorators_1.property(),
             widget_1.renderable()
-        ], IconButton.prototype, "title", void 0);
+        ], Slider.prototype, "max", void 0);
+        __decorate([
+            decorators_1.property(),
+            widget_1.renderable()
+        ], Slider.prototype, "step", void 0);
+        __decorate([
+            decorators_1.property(),
+            widget_1.renderable()
+        ], Slider.prototype, "value", void 0);
+        __decorate([
+            decorators_1.property(),
+            widget_1.renderable()
+        ], Slider.prototype, "title", void 0);
         __decorate([
             widget_1.accessibleHandler()
-        ], IconButton.prototype, "_triggerAction", null);
-        IconButton = __decorate([
-            decorators_1.subclass("widgets.IconButton")
-        ], IconButton);
-        return IconButton;
+        ], Slider.prototype, "_changeHandler", null);
+        Slider = __decorate([
+            decorators_1.subclass("widgets.Slider")
+        ], Slider);
+        return Slider;
     }(decorators_1.declared(Widget)));
-    exports.default = IconButton;
+    exports.default = Slider;
 });
-//# sourceMappingURL=IconButton.js.map
+//# sourceMappingURL=Slider.js.map

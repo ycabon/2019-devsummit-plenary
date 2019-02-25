@@ -11,7 +11,7 @@ import Widget = require("esri/widgets/Widget");
 import { accessibleHandler, tsx, renderable } from "esri/widgets/support/widget";
 
 const CSS = {
-  button: "esri-widget-button esri-widget widgets-iconbutton",
+  button: "esri-component esri-widget--button esri-widget widgets-iconbutton",
   disabled: "esri-disabled",
   interactive: "esri-interactive",
   icon: "esri-icon"

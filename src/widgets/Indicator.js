@@ -23,7 +23,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CSS = {
-        base: "widgets-indicator esri-widget",
+        base: "esri-widget widgets-indicator",
         titleWrapper: "widgets-indicator--title-wrapper",
         title: "widgets-indicator--title",
         valueWrapper: "widgets-indicator--value-wrapper",
