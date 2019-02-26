@@ -18,51 +18,12 @@
 
 <body>
   <div class="application">
-    <div id="viewContainer" class="mapping" style="display: flex;"></div>
-    <!-- <div id="sceneViewDiv" class="mapping" style="display: flex;"></div> -->
-    <div class="ui">
-      <div id="panel" class="esri-widget esri-component right-panel">
-        <fieldset>
-          <legend>Filter by magnitude</legend>
-          <div id="magnitudeSlider" class="histogram-slider">
-            <div class="histogram"></div>
-            <div class="multithumb">
-              <div class="label-wrapper">
-                <span class="thumb-min-value">0</span>
-              </div>
-              <div class="slider-wrapper">
-                <input class="thumb-min" type="range" min="0" step=".1" max="8" value="0">
-                <input class="thumb-max" type="range" min="0" step=".1" max="8" value="8">
-              </div>
-              <div class="label-wrapper">
-                <span class="thumb-max-value">8</span>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>Filter by time</legend>
-          <div id="timeSlider" class="histogram-slider">
-            <div class="histogram"></div>
-            <div class="multithumb">
-              <div class="label-wrapper">
-                <span class="thumb-min-value">-</span>
-              </div>
-              <div class="slider-wrapper">
-                <input class="thumb-min" type="range" min="0" step=".1" max="8" value="0">
-                <input class="thumb-max" type="range" min="0" step=".1" max="8" value="8">
-              </div>
-              <div class="label-wrapper">
-                <span class="thumb-max-value">-</span>
-              </div>
-            </div>
-          </div>
-        </fieldset>
-      </div>
-    </div>
+    <div id="viewDiv" class="mapping" style="display: flex;"></div>
   </div>
   <script src="src/config.js"></script>
   <script src="https://jsdev.arcgis.com/4.11/dojo/dojo.js"></script>
+  <!-- <script src="http://ycabon.esri.com/arcgis-js-api-4/test-apps/dojo-config.js"></script>
+  <script src="http://ycabon.esri.com/arcgis-js-api-4/dojo/dojo.js"></script> -->
 </body>
 
 </html>
