@@ -32,7 +32,7 @@ let view: MapView;
   view = new MapView({
     container: "viewDiv",
     map,
-    center: [-100, 40],
+    center: [-85, 40],
     zoom: 3,
     constraints: {
       snapToZoom: false,
@@ -45,6 +45,7 @@ let view: MapView;
     },
     popup: null
   });
+  (window as any).view = view;
 
   const layer = await Layer.fromPortalItem({
     portalItem: new PortalItem({
@@ -63,7 +64,7 @@ let view: MapView;
   view.ui.add(new Home({ view }), "bottom-right");
 
   new Legend({ view, container: "legend" });
-  const indicator = new Indicator({
+  new Indicator({
     container: "indicator",
     title: "Percent Unemployed",
     format: new Intl.NumberFormat(undefined, {
@@ -100,43 +101,4 @@ let view: MapView;
     layer
   });
 
-  const counties = await Layer.fromPortalItem({
-    portalItem: new PortalItem({
-      id: "48f9af87daa241c4b267c5931ad3b226"
-    })
-  }) as FeatureLayer;
-  counties.legendEnabled = false;
-  counties.outFields = ["NAME"];
-  counties.renderer = new SimpleRenderer({
-    symbol: new SimpleFillSymbol({
-      color: "rgba(0,0,0,0.05)",
-      outline: null
-    })
-  });
-  view.map.add(counties);
-
-  const countiesLayerView = await view.whenLayerView(counties) as FeatureLayerView;
-  view.highlightOptions = {
-    fillOpacity: 0,
-    color: "white" as any,
-    haloOpacity: 1
-  };
-  let highlight: IHandle = null;
-
-  view.on("click", async (event) => {
-    const point = view.toMap(event);
-    const result = await countiesLayerView.queryFeatures({
-      geometry: point,
-      outFields: [counties.objectIdField, "NAME"]
-    });
-
-    highlight && highlight.remove();
-    indicator.geometry = null;
-
-    if (result.features[0]) {
-      const graphic = result.features[0];
-      highlight = countiesLayerView.highlight(graphic);
-      indicator.geometry = graphic.geometry as Polygon;
-    }
-  })
 })();

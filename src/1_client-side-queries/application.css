@@ -21,6 +21,7 @@ body {
 }
 
 .esri-widget.no-background {
+  padding: 0;
   background: none;
   background-color: transparent;
   backdrop-filter: none;
@@ -57,5 +58,6 @@ body {
   backdrop-filter: blur(5px) contrast(200%);
 }
 
-.ui .right-panel .esri-legend__service .esri-legend__group-layer { padding: 0; }
-.ui .right-panel .esri-widget__heading .esri-legend__service-label { display: none; }
+.esri-legend__service.esri-legend__group-layer { padding: 0; }
+.esri-widget__heading.esri-legend__service-label { display: none; }
+

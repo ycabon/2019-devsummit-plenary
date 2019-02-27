@@ -1,194 +1,133 @@
 import MapView = require("esri/views/MapView");
-import SceneView = require("esri/views/SceneView");
 import WebMap = require("esri/WebMap");
 import TileLayer = require("esri/layers/TileLayer");
-import WebScene = require("esri/WebScene");
-import { ClassBreaksRenderer, SimpleRenderer } from "esri/renderers";
-import { PictureMarkerSymbol, SimpleMarkerSymbol } from "esri/symbols";
+import { SimpleRenderer } from "esri/renderers";
+import { SimpleMarkerSymbol } from "esri/symbols";
 import Header from "../widgets/Header";
-import IconButton from "../widgets/IconButton";
-import Slider from "../widgets/Slider";
-import ToggleIconButton from "../widgets/ToggleIconButton";
-import ActionButton = require("esri/support/actions/ActionButton");
 import GeoJSONLayer = require("esri/layers/GeoJSONLayer");
 import SizeVariable = require("esri/renderers/visualVariables/SizeVariable");
-import Expand = require("esri/widgets/Expand");
 import histogram = require("esri/renderers/smartMapping/statistics/histogram");
 import FeatureFilter = require("esri/views/layers/support/FeatureFilter");
 import FeatureLayerView = require("esri/views/layers/FeatureLayerView");
 
+import Expand = require("esri/widgets/Expand");
+import Zoom = require("esri/widgets/Zoom");
+import Home = require("esri/widgets/Home");
+
+
 let map: WebMap;
-let mapView: MapView;
+let view: MapView;
 
-function createLayer() {
-  return new GeoJSONLayer({
-    url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
-    title: "USGS Earthquakes",
-    copyright: "USGS",
-    popupTemplate: {
-      title: `{title}`,
-      content: `
-        Earthquake of magnitude {mag} on {time}.<br />
-      `,
-      outFields: ["url"]
-    },
-    fields: [
-      {
-        "name": "mag",
-        "type": "double"
-      },
-      {
-        "name": "place",
-        "type": "string"
-      },
-      {
-        "name": "time",
-        "type": "date"
-      },
-      {
-        "name": "url",
-        "type": "string"
-      },
-      {
-        "name": "title",
-        "type": "string"
+const layer = new GeoJSONLayer({
+  url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
+  title: "USGS Earthquakes",
+  copyright: "USGS",
+  definitionExpression: "type = 'earthquake'",
+  popupTemplate: {
+    title: `{title}`,
+    content: `
+      Earthquake of magnitude {mag} on {time}.<br />
+      <a href="{url}" target="_blank" class="esri-popup__button">More details...</a>
+    `
+  },
+  fields: [
+    { "name": "mag", "type": "double" },
+    { "name": "place", "type": "string" },
+    { "name": "time", "type": "date" },
+    { "name": "url", "type": "string" },
+    { "name": "title", "type": "string" },
+    { "name": "type", "type": "string" }
+  ],
+  renderer: new SimpleRenderer({
+    symbol: new SimpleMarkerSymbol({
+      style: "circle",
+      color: "orange",
+      outline: {
+        color: "rgba(255,255,255,0.1)",
+        width: "1px"
       }
-    ],
-    renderer: new SimpleRenderer({
-      symbol: new SimpleMarkerSymbol({
-        style: "circle",
-        color: "red",
-        outline: {
-          color: "rgba(255,255,255,0.2)",
-          width: 1
-        }
-      }),
-      visualVariables: [
-        new SizeVariable({
-          field: "mag",
-          legendOptions: {
-            title: "Magnitude",
-            showLegend: false
-          },
-          stops: [{
-            value: 2.5,
-            size: 2,
-            label: "> 2.5"
-          },
-          {
-            value: 5,
-            size: 10
-          },
-          {
-            value: 6,
-            size: 20
-          },
-          {
-            value: 7,
-            size: 40
-          },
-          {
-            value: 8,
-            size: 60,
-            label: "> 8"
-          }]
-        })
-      ]
-    })
-  });
-}
-
-(async () => {
-  map = new WebMap({
-    basemap: {
-      baseLayers: [
-        new TileLayer({
-          url: "https://tilesdevext.arcgis.com/tiles/LkFyxb9zDq7vAOAm/arcgis/rest/services/VintageHillshadeEqualEarth_Pacific/MapServer"
-        })
-      ]
-    },
-    layers: [createLayer()]
-  });
-
-  map.basemap.baseLayers.getItemAt(0).opacity = 0.90;
-
-  mapView = new MapView({
-    container: "viewDiv",
-    map,
-    ui: {
-      components: ["attribution"]
-    }
-  });
-
-  setupUI(mapView);
-  setupSliders(map.layers.getItemAt(0) as GeoJSONLayer);
-})();
-
-async function setupUI(view: MapView | SceneView) {
-  const [Legend, Zoom, Home, { default: Indicator }] = await Promise.all([
-    import("esri/widgets/Legend"),
-    import("esri/widgets/Zoom"),
-    import("esri/widgets/Home"),
-    import("../widgets/Indicator")
-  ]);
-
-  const zoom = new Zoom({
-    view,
-    layout: "horizontal"
-  });
-
-  const home = new Home({
-    view
-  });
-
-  view.ui.add(zoom, "bottom-left");
-  view.ui.add(home, "bottom-left");
-
-  view.ui.add(new Header({
-    title: "GeoJSON",
-    actionContent: [
-      new ToggleIconButton({
-        title: "Filter",
-        toggle: () => {
-          const panel = document.getElementById("panel");
-          panel.classList.toggle("hidden");
-        }
+    }),
+    visualVariables: [
+      new SizeVariable({
+        field: "mag",
+        legendOptions: {
+          title: "Magnitude",
+          showLegend: false
+        },
+        stops: [{
+          value: 2.5,
+          size: 4,
+          label: "> 2.5"
+        },{
+          value: 6,
+          size: 10
+        },
+        {
+          value: 8,
+          size: 40,
+          label: "> 8"
+        }]
       })
     ]
-  }));
+  })
+});
 
-  view.popup.viewModel.on("trigger-action", (event) => {
-    if (event.action.id === "more-details") {
-      window.open(view.popup.viewModel.selectedFeature.attributes.url, "_blank");
-    }
-  });
-}
+map = new WebMap({
+  basemap: {
+    baseLayers: [
+      new TileLayer({
+        url: "https://tilesdevext.arcgis.com/tiles/LkFyxb9zDq7vAOAm/arcgis/rest/services/VintageHillshadeEqualEarth_Pacific/MapServer"
+      })
+    ]
+  },
+  layers: [
+    layer
+  ]
+});
 
-const filter = new FeatureFilter();
+map.basemap.baseLayers.getItemAt(0).opacity = 1;
 
-async function updateFilter(): Promise<void> {
-  const lv2d = mapView.layerViews.getItemAt(0) as FeatureLayerView;
-
-  lv2d && (lv2d.filter = filter.clone());
-}
-
-function setupSliders(layer: GeoJSONLayer): void {
-  const magnitudeSlider = setupSlider(layer, document.getElementById("magnitudeSlider"), {
-    field: "mag",
-    minValue: 0,
-    maxValue: 8,
-    numBins: 16
-  });
-
-  magnitudeSlider.onChange = (field, minValue, maxValue) => {
-    filter.where = `mag >= ${minValue} AND mag <= ${maxValue}`;
-    updateFilter();
+view = new MapView({
+  container: "viewDiv",
+  map,
+  ui: {
+    padding: {
+      top: 80
+    },
+    components: ["attribution"]
   }
+});
 
-  const timeSlider = setupSlider(layer, document.getElementById("timeSlider"), {
-    field: "time",
-    numBins: 8
+const $ = document.querySelector.bind(document);
+view.ui.add(new Zoom({ view, layout: "horizontal" }), "bottom-right");
+view.ui.add(new Home({ view }), "bottom-right");
+view.ui.add(new Header({ title: "Filter & Effect" }));
+
+const magnitudeSlider = setupSlider(layer, $("#magnitudeSlider"), {
+  field: "mag",
+  minValue: 0,
+  maxValue: 8,
+  numBins: 16
+});
+
+view.ui.add(
+  new Expand({
+    expandIconClass: "esri-icon-chart",
+    expandTooltip: "Filter by magnitude",
+    content: $("#filterPanel"),
+    expanded: false,
+    group: "group1",
+    view
+  }),
+  "top-left"
+);
+
+magnitudeSlider.onChange = (field, minValue, maxValue) => {
+  const layerView = view.layerViews.getItemAt(0) as FeatureLayerView;
+  layerView.filter = new FeatureFilter({
+    where: `mag >= ${minValue} AND mag <= ${maxValue}`
   });
+  // $("#filterCode").innerHTML =
 }
 
 type SliderHandler = {
@@ -201,7 +140,7 @@ function setupSlider(layer: any, element: HTMLElement, options?: {
   maxValue?: number;
   numBins: number;
 }): SliderHandler {
-  const histogramEl: HTMLDivElement = element.querySelector(".histogram");
+  const histogramEl: HTMLDivElement = $(".histogram");
 
   if (histogramEl) {
     const histogramElRect = histogramEl.getBoundingClientRect();
@@ -226,11 +165,11 @@ function setupSlider(layer: any, element: HTMLElement, options?: {
       });
   }
 
-  const minThumb: HTMLInputElement = element.querySelector(".thumb-min");
-  const maxThumb: HTMLInputElement = element.querySelector(".thumb-max");
+  const minThumb: HTMLInputElement = $(".thumb-min");
+  const maxThumb: HTMLInputElement = $(".thumb-max");
 
-  const minValue: HTMLSpanElement = element.querySelector(".thumb-min-value");
-  const maxValue: HTMLSpanElement = element.querySelector(".thumb-max-value");
+  const minValue: HTMLSpanElement = $(".thumb-min-value");
+  const maxValue: HTMLSpanElement = $(".thumb-max-value");
 
   minThumb.min = maxThumb.min = "" + options.minValue;
   minThumb.max = maxThumb.max = "" + options.maxValue;

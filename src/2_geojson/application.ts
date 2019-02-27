@@ -1,7 +1,7 @@
 import WebScene = require("esri/WebScene");
 import SceneView = require("esri/views/SceneView");
 import GeoJSONLayer = require("esri/layers/GeoJSONLayer");
-import { SimpleRenderer, ClassBreaksRenderer } from "esri/renderers";
+import { SimpleRenderer } from "esri/renderers";
 import { PictureMarkerSymbol, PointSymbol3D, ObjectSymbol3DLayer } from "esri/symbols";
 import SizeVariable = require("esri/renderers/visualVariables/SizeVariable");
 import ColorVariable = require("esri/renderers/visualVariables/ColorVariable");
@@ -44,7 +44,7 @@ const layer = new GeoJSONLayer({
 
 const scene = new WebScene({
   basemap: { portalItem: { id: "39858979a6ba4cfd96005bbe9bd4cf82" } },
-  ground: "world-topobathymetry"
+  ground: "world-elevation"
 });
 
 const view = new SceneView({
@@ -128,7 +128,7 @@ view.ui.add(alaska, "bottom-right");
 view.ui.add(new Header({ title: "GeoJSON" }));
 
 const $ = document.querySelector.bind(document);
-const opacitySliderDiv = document.getElementById("opacitySlider");
+const opacitySliderDiv = $("#opacitySlider");
 
 $("#addGeoJSONLayerButton").onclick = () => {
   scene.add(layer);
@@ -152,7 +152,7 @@ new Slider({
   value: 1,
   // title: "Ground opacity",
   action: (value) => {
-    document.getElementById("groundOpacityCode").innerText = `scene.ground.opacity = ${value}`;
+    $("#groundOpacityCode").innerText = `scene.ground.opacity = ${value}`;
     scene.ground.opacity = value;
   }
 });
@@ -161,7 +161,7 @@ view.ui.add(
   new Expand({
     expandIconClass: "esri-icon-feature-layer",
     expandTooltip: "Layer",
-    content: document.getElementById("layerPanel"),
+    content: $("#layerPanel"),
     expanded: true,
     group: "group1",
     view
@@ -173,7 +173,7 @@ view.ui.add(
   new Expand({
     expandIconClass: "esri-icon-globe",
     expandTooltip: "Elevation",
-    content: document.getElementById("elevationPanel"),
+    content: $("#elevationPanel"),
     expanded: false,
     group: "group1",
     view
@@ -185,7 +185,7 @@ view.ui.add(
   new Expand({
     expandIconClass: "esri-icon-maps",
     expandTooltip: "Renderer",
-    content: document.getElementById("rendererPanel"),
+    content: $("#rendererPanel"),
     expanded: false,
     group: "group1",
     view
