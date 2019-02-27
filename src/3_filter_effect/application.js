@@ -346,7 +346,7 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/
                                 where: "depth >= " + minValue + " AND depth <= " + maxValue
                             })
                         });
-                        $("#effectCode").innerHTML = "\nlayerView.effect = new FeatureEffect({\n  outsideEffect: &quot;grayscale(75%) opacity(0.75)&quot;,\n  insideEffect: &quot;brightness(110%)&quot;,\n  filter: new FeatureFilter({\n    where: `depth &gt;= " + minValue + " AND depth &lt;= " + maxValue + "`\n  })\n});\n  ";
+                        $("#effectCode").innerHTML = "\n  layerView.effect = new FeatureEffect({\n    outsideEffect: &quot;grayscale(75%) opacity(0.75)&quot;,\n    insideEffect: &quot;brightness(110%)&quot;,\n    filter: new FeatureFilter({\n      where: `depth &gt;= " + minValue + " AND depth &lt;= " + maxValue + "`\n    })\n  });\n  ";
                         hljs.highlightBlock($("#effectCode"));
                     };
                     return [2 /*return*/];

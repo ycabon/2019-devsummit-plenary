@@ -209,13 +209,13 @@ layerView.effect = new FeatureEffect({
   })
 });
     $("#effectCode").innerHTML = `
-layerView.effect = new FeatureEffect({
-  outsideEffect: &quot;grayscale(75%) opacity(0.75)&quot;,
-  insideEffect: &quot;brightness(110%)&quot;,
-  filter: new FeatureFilter({
-    where: \`depth &gt;= ${minValue} AND depth &lt;= ${maxValue}\`
-  })
-});
+  layerView.effect = new FeatureEffect({
+    outsideEffect: &quot;grayscale(75%) opacity(0.75)&quot;,
+    insideEffect: &quot;brightness(110%)&quot;,
+    filter: new FeatureFilter({
+      where: \`depth &gt;= ${minValue} AND depth &lt;= ${maxValue}\`
+    })
+  });
   `
     hljs.highlightBlock($("#effectCode"));
   }
