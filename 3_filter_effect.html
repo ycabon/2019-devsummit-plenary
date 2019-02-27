@@ -7,13 +7,14 @@
   <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
   <title>GeoJSON</title>
 
-  <link rel="stylesheet" href="./src/3_geojson/application.css">
+  <link rel="stylesheet" href="./src/3_filter_effect/application.css">
   <link rel="stylesheet" href="./src/widgets/Indicator.css">
   <link rel="stylesheet" href="./src/widgets/Header.css">
   <link rel="stylesheet" href="./src/widgets/IconButton.css">
   <link rel="stylesheet" href="./src/widgets/ToggleIconButton.css">
   <link rel="stylesheet" href="./src/widgets/Slider.css">
   <link rel="stylesheet" href="https://jsdev.arcgis.com/4.11/esri/themes/light/main.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.5/build/styles/agate.min.css">
 </head>
 
 <body>
@@ -21,7 +22,7 @@
     <div id="viewDiv" class="mapping" style="display: flex;"></div>
   </div>
 
-  <div id="filterPanel"  class="esri-widget application-panel">
+  <div id="filterPanel" class="esri-widget application-panel">
     <fieldset>
       <legend>Filter by magnitude</legend>
       <div id="magnitudeSlider" class="histogram-slider">
@@ -40,12 +41,48 @@
         </div>
       </div>
       <div class="js-code">
-        <pre><code id="filterCode" class="javascript">layerView.filter = null;</code></pre>
+        <pre><code id="filterCode" class="javascript">
+  layerView.filter = null;
+
+
+        </code></pre>
       </div>
       <div id="Slider"></div>
     </fieldset>
   </div>
 
+  <div id="effectPanel" class="esri-widget application-panel">
+    <fieldset>
+      <legend>Effect</legend>
+      <div class="histogram-slider-wrapper">
+        <div id="depthSlider" class="histogram-slider" style="transform: rotate(90deg)">
+          <div class="histogram"></div>
+          <div class="multithumb">
+            <div class="label-wrapper">
+              <span class="thumb-min-value">0</span>
+            </div>
+            <div class="slider-wrapper">
+              <input class="thumb-min" type="range" min="0" step=".1" max="8" value="0">
+              <input class="thumb-max" type="range" min="0" step=".1" max="8" value="8">
+            </div>
+            <div class="label-wrapper">
+              <span class="thumb-max-value">8</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="js-code">
+        <pre><code id="filterCode" class="javascript">
+  layerView.filter = null;
+
+
+        </code></pre>
+      </div>
+      <div id="Slider"></div>
+    </fieldset>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.5/build/highlight.min.js"></script>
   <script src="src/config.js"></script>
   <script src="https://jsdev.arcgis.com/4.11/dojo/dojo.js"></script>
   <!-- <script src="http://ycabon.esri.com/arcgis-js-api-4/test-apps/dojo-config.js"></script>
