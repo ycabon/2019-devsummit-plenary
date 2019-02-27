@@ -19,7 +19,7 @@ const CSS = {
 @subclass("widgets.Slider")
 export default class Slider extends declared(Widget) {
 
-  constructor(props: Partial<Pick<Slider, "min" | "max" | "step" | "value" | "title" | "action">>) {
+  constructor(props: Partial<Pick<Slider, "min" | "max" | "step" | "value" | "title" | "action" | "container">>) {
     super(props as any);
   }
 
@@ -83,10 +83,11 @@ export default class Slider extends declared(Widget) {
   //--------------------------------------------------------------------------
 
   render() {
+    const titleNode = this.title ? <span class={CSS.title}>{this.title}</span> : null;
     return (
       <div bind={this}
         class={CSS.base}>
-        <span class={CSS.title}>{this.title}</span>
+        {titleNode}
         <input
           bind={this}
           class={CSS.value}

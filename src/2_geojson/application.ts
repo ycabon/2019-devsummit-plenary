@@ -1,231 +1,236 @@
-import MapView = require("esri/views/MapView");
-import SceneView = require("esri/views/SceneView");
-import WebMap = require("esri/WebMap");
-import TileLayer = require("esri/layers/TileLayer");
 import WebScene = require("esri/WebScene");
-import { ClassBreaksRenderer } from "esri/renderers";
-import { PictureMarkerSymbol } from "esri/symbols";
+import SceneView = require("esri/views/SceneView");
+import GeoJSONLayer = require("esri/layers/GeoJSONLayer");
+import { SimpleRenderer, ClassBreaksRenderer } from "esri/renderers";
+import { PictureMarkerSymbol, PointSymbol3D, ObjectSymbol3DLayer } from "esri/symbols";
+import SizeVariable = require("esri/renderers/visualVariables/SizeVariable");
+import ColorVariable = require("esri/renderers/visualVariables/ColorVariable");
+
+import Expand = require("esri/widgets/Expand");
+import Zoom = require("esri/widgets/Zoom");
+import Home = require("esri/widgets/Home");
 import Header from "../widgets/Header";
 import Slider from "../widgets/Slider";
-import ToggleIconButton from "../widgets/ToggleIconButton";
-import ActionButton = require("esri/support/actions/ActionButton");
-import GeoJSONLayer = require("esri/layers/GeoJSONLayer");
-import SizeVariable = require("esri/renderers/visualVariables/SizeVariable");
-import Expand = require("esri/widgets/Expand");
-import histogram = require("esri/renderers/smartMapping/statistics/histogram");
-import FeatureFilter = require("esri/views/layers/support/FeatureFilter");
-import FeatureLayerView = require("esri/views/layers/FeatureLayerView");
+import IconButton from "../widgets/IconButton";
+import Camera = require("esri/Camera");
 
-let scene: WebScene;
-let sceneView: SceneView;
+const layer = new GeoJSONLayer({
+  url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
+  title: "USGS Earthquakes",
+  copyright: "USGS",
+  definitionExpression: "type = 'earthquake'",
+  popupTemplate: {
+    title: `{title}`,
+    content: `
+      Earthquake of magnitude {mag} on {time}.<br />
+      <a href="{url}" target="_blank" class="esri-popup__button">More details...</a>
+    `
+  },
+  fields: [
+    { "name": "mag", "type": "double" },
+    { "name": "place", "type": "string" },
+    { "name": "time", "type": "date" },
+    { "name": "url", "type": "string" },
+    { "name": "title", "type": "string" },
+    { "name": "type", "type": "string" }
+  ],
+  elevationInfo: { mode: "on-the-ground" },
+  renderer: new SimpleRenderer({
+    symbol: new PictureMarkerSymbol({
+      url: "./src/2_geojson/Mag4.png"
+    })
+  })
+});
 
-function createLayer() {
-  return new GeoJSONLayer({
-    url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
-    title: "USGS Earthquakes",
-    copyright: "USGS",
-    // timeInfo: {
-    //   endTimeFie
-    // },
-    fields: [
-      {
-        "name": "mag",
-        "type": "double"
-      },
-      {
-        "name": "place",
-        "type": "string"
-      },
-      {
-        "name": "time",
-        "type": "date"
-      },
-      {
-        "name": "url",
-        "type": "string"
-      },
-      {
-        "name": "title",
-        "type": "string"
-      }
-    ],
-    elevationInfo: {
-      mode: "absolute-height",
-      unit: "kilometers",
-      featureExpressionInfo: {
-        expression: "Geometry($feature).z * -1"
-      }
+const scene = new WebScene({
+  basemap: { portalItem: { id: "39858979a6ba4cfd96005bbe9bd4cf82" } },
+  ground: "world-topobathymetry"
+});
+
+const view = new SceneView({
+  container: "viewDiv",
+  map: scene,
+  qualityProfile: "high",
+  camera: {
+    position: {
+      x: -16743466,
+      y: 3344365,
+      z: 10123853,
+      spatialReference: { wkid: 102100 }
     },
-    // elevationInfo: {
-    //   mode: "absolute-height",
-    //   unit: "kilometers",
-    //   featureExpressionInfo: {
-    //     expression: "Geometry($feature).z * -1"
-    //   }
-    // },
-    popupTemplate: {
-      title: `{title}`,
-      content: `
-        Earthquake of magnitude {mag} on {time}.<br />
-      `,
-      outFields: ["url"],
-      actions: [
-        new ActionButton({
-          id: "more-details",
-          title: "More details"
+    heading: 7.55,
+    tilt: 14.93
+  },
+  environment: {
+    background: {
+      type: "color",
+      color: "black"
+    },
+    starsEnabled: false,
+    atmosphereEnabled: false
+  },
+  ui: {
+    padding: {
+      top: 80
+    },
+    components: ["attribution"]
+  },
+});
+
+(window as any).view = view;
+
+const zoom = new Zoom({ view, layout: "horizontal" });
+const home = new Home({ view });
+const alaska = new IconButton({ title: "AK", action: () => {
+  const camera = new Camera({
+    "position": {
+      "spatialReference": {
+        "wkid": 102100
+      },
+      "x": -17273102.82417752,
+      "y": 7377420.827751662,
+      "z": 577513.3076313715
+    },
+    "heading": 16.130538766633766,
+    "tilt": 52.01343839819215
+  });
+  view.goTo(camera, {
+    duration: 3000
+  });
+}});
+const quakeBookmark = new IconButton({
+  title: "Underground", action: () => {
+    scene.ground.navigationConstraint = {
+      type: "none"
+    };
+    const camera = new Camera({
+      "position": {
+        "spatialReference": {
+          "wkid": 102100
+        },
+        "x": -16789244.894988775,
+        "y": 8574543.43502422,
+        "z": -44618.189062614925
+      },
+      "heading": 22.958547703630877,
+      "tilt": 95.36043529090966
+    });
+    view.goTo(camera, {
+      duration: 3000
+    });
+  }
+})
+
+view.ui.add(zoom, "bottom-right");
+view.ui.add(home, "bottom-right");
+view.ui.add(quakeBookmark, "bottom-right");
+view.ui.add(alaska, "bottom-right");
+view.ui.add(new Header({ title: "GeoJSON" }));
+
+const $ = document.querySelector.bind(document);
+const opacitySliderDiv = document.getElementById("opacitySlider");
+
+$("#addGeoJSONLayerButton").onclick = () => {
+  scene.add(layer);
+}
+
+ $("#applyElevationInfoButton").onclick = () => {
+  layer.elevationInfo = {
+    mode: "absolute-height",
+    unit: "kilometers",
+    featureExpressionInfo: {
+      expression: "Geometry($feature).z * -1"
+    }
+  };
+}
+
+new Slider({
+  container: opacitySliderDiv,
+  min: 0,
+  max: 1,
+  step: 0.01,
+  value: 1,
+  // title: "Ground opacity",
+  action: (value) => {
+    document.getElementById("groundOpacityCode").innerText = `scene.ground.opacity = ${value}`;
+    scene.ground.opacity = value;
+  }
+});
+
+view.ui.add(
+  new Expand({
+    expandIconClass: "esri-icon-feature-layer",
+    expandTooltip: "Layer",
+    content: document.getElementById("layerPanel"),
+    expanded: true,
+    group: "group1",
+    view
+  }),
+  "top-left"
+);
+
+view.ui.add(
+  new Expand({
+    expandIconClass: "esri-icon-globe",
+    expandTooltip: "Elevation",
+    content: document.getElementById("elevationPanel"),
+    expanded: false,
+    group: "group1",
+    view
+  }),
+  "top-left"
+);
+
+view.ui.add(
+  new Expand({
+    expandIconClass: "esri-icon-maps",
+    expandTooltip: "Renderer",
+    content: document.getElementById("rendererPanel"),
+    expanded: false,
+    group: "group1",
+    view
+  }),
+  "top-left"
+);
+
+$("#applyRendererButton").onclick = () => {
+  layer.renderer = new SimpleRenderer({
+    symbol: new PointSymbol3D({
+      symbolLayers: [
+        new ObjectSymbol3DLayer({
+          resource: {
+            primitive: "sphere"
+          }
         })
       ]
-    },
-    renderer: new ClassBreaksRenderer({
-      field: "mag",
-      classBreakInfos: [
-        {
-          minValue: -10,
-          maxValue: 1,
-          symbol: new PictureMarkerSymbol({
-            url: "src/2_geojson/Mag2.png"
-          })
-        },
-        {
-          minValue: 1,
-          maxValue: 4,
-          symbol: new PictureMarkerSymbol({
-            url: "src/2_geojson/Mag3.png"
-          })
-        },
-        {
-          minValue: 4,
-          maxValue: 5,
-          symbol: new PictureMarkerSymbol({
-            url: "src/2_geojson/Mag4.png"
-          })
-        },
-        {
-          minValue: 5,
-          maxValue: 6,
-          symbol: new PictureMarkerSymbol({
-            url: "src/2_geojson/Mag5.png"
-          })
-        },
-        {
-          minValue: 6,
-          maxValue: 7,
-          symbol: new PictureMarkerSymbol({
-            url: "src/2_geojson/Mag6.png"
-          })
-        },
-        {
-          minValue: 7,
-          maxValue: 10,
-          symbol: new PictureMarkerSymbol({
-            url: "src/2_geojson/Mag7.png"
-          })
-        }
-      ],
-      visualVariables: [
-        new SizeVariable({
-          field: "mag",
-          legendOptions: {
-            title: "Magnitude",
-            showLegend: false
-          },
-          stops: [{
-            value: 2.5,
-            size: 12,
-            label: "> 2.5"
+    }),
+    visualVariables: [
+      new ColorVariable({
+        field: "mag",
+        stops: [
+          {
+            value: 1,
+            color: "white"
+          }, {
+            value: 5,
+            color: "red"
+          }
+        ]
+      }),
+      new SizeVariable({
+        field: "mag",
+        axis: "all",
+        stops: [
+          {
+            value: 2,
+            size: 500
           },
           {
             value: 7,
-            size: 40
-          },
-          {
-            value: 8,
-            size: 80,
-            label: "> 8"
-          }]
-        })
-      ]
-    })
-  });
-}
-
-(async () => {
-  scene = new WebScene({
-    basemap: { portalItem: { id: "39858979a6ba4cfd96005bbe9bd4cf82" } },
-    ground: "world-elevation",
-    layers: [createLayer()]
-  });
-
-  sceneView = new SceneView({
-    container: "viewDiv",
-    map: scene,
-    qualityProfile: "high",
-    // viewingMode: "local",
-    ui: {
-      padding: {
-        top: 80
-      },
-      components: ["attribution"]
-    },
-    environment: {
-      background: {
-        type: "color",
-        color: "black"
-      }
-      // starsEnabled: false,
-      // atmosphereEnabled: false
-    }
-  });
-  scene.ground.navigationConstraint = {
-    type: "none"
-  };
-
-  setupUI(sceneView);
-
-  sceneView.ui.add(
-    new Expand({
-      content: new Slider({
-        min: 0,
-        max: 1,
-        step: 0.1,
-        value: 1,
-        title: "Ground opacity",
-        action: (value) => {
-          scene.ground.opacity = value;
-        }
+            size: 10000
+          }
+        ]
       })
-    }),
-    "top-left"
-  )
-})();
-
-async function setupUI(view: MapView | SceneView) {
-  const [Legend, Zoom, Home, { default: Indicator }] = await Promise.all([
-    import("esri/widgets/Legend"),
-    import("esri/widgets/Zoom"),
-    import("esri/widgets/Home"),
-    import("../widgets/Indicator")
-  ]);
-
-  const zoom = new Zoom({
-    view,
-    layout: "horizontal"
+    ]
   });
-
-  const home = new Home({
-    view
-  });
-
-  view.ui.add(zoom, "bottom-left");
-  view.ui.add(home, "bottom-left");
-
-  view.ui.add(new Header({
-    title: "GeoJSON"
-  }));
-
-  view.popup.viewModel.on("trigger-action", (event) => {
-    if (event.action.id === "more-details") {
-      window.open(view.popup.viewModel.selectedFeature.attributes.url, "_blank");
-    }
-  });
-}
+};

@@ -19,142 +19,45 @@ body {
   height: 100%;
 }
 
-.scening {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
-.esri-widget.no-background {
-  background: none;
-  background-color: transparent;
-  backdrop-filter: none;
-}
-
-.ui {
-  position: absolute;
-  top: 85px;
-  bottom: 35px;
-  right: 0;
-
-  display: flex;
-
-  overflow: hidden;
-}
-
-.ui .right-panel {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-
-  padding-top: 15px;
-  width: 400px;
-  /* background: #24242466; */
-  /* backdrop-filter: blur(5px); */
-  transform: translate(0px);
-  transition: 300ms all;
-}
-
-.ui .right-panel.hidden {
-  transform: translate(600px);
-}
-
-.histogram-slider {
-  display: flex;
-  flex-direction: column;
-  justify-content: stretch;
-}
-
-.histogram-slider .histogram {
-  height: 80px;
-  padding-left: 40px;
-  padding-right: 40px;
-  /* background: red; */
-
-  /* container of the bars */
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-end;
-}
-
-.histogram-slider .histogram .bar {
-  flex-grow: 1;
-}
-
-.histogram-slider .histogram .bar .content {
-  margin-left: 2px;
-  margin-right: 2px;
-  background: #69dcff;
-}
-
-/**
- * multi thumb slider
- */
-/* input[type=range]:focus::-webkit-slider-thumb   { outline: 1px solid #369; outline-offset: 2px; }
-input[type=range]:focus::-moz-range-thumb   { outline: 1px solid #369; outline-offset: 2px; }
-input[type=range]:focus::-ms-thumb   { outline: 3px solid #369; outline-offset: 2px; } */
-input[type="range"] {
-  display: block;
-  height: 2em;
-  margin: 0;
-  pointer-events: none;
-  width: 100%;
-}
-_:-ms-lang(x), input[type="range"] {
-  display: inline;
-  pointer-events: all;
-}
-
-input[type="range"] + input[type="range"] {
-  margin-top: -2em;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  pointer-events: all;
-}
-
-input[type="range"]::-moz-range-thumb {
-  pointer-events: all;
-}
-
-input[type="range"]::-ms-thumb {
-  pointer-events: all;
-}
-input[type=range]::-moz-range-thumb {
-  background-color: #999;
-  pointer-events: all;
-}
-
-input[type="range"]::-ms-thumb {
-  pointer-events: all;
-}
-
-.multithumb {
-  display: flex;
-  flex-direction: row;
-  justify-content: stretch;
-  align-items: center;
-}
-
-.label-wrapper {
-  width: 40px;
-  text-align: center;
-}
-
-.slider-wrapper {
-  flex-grow: 1;
-}
-
-fieldset {
+.application-panel {
   padding: 12px;
+  width: auto;
+
+  display: flex;
+  flex-direction: column;
+}
+/*
+.application-panel .hljs {
+  background: black;
+} */
+
+.esri-widget .application-panel {
+  background-color: #242424AA;
+  backdrop-filter: blur(5px) contrast(200%);
+}
+
+.application-panel fieldset {
   border: none;
+  padding: 0;
+  margin: 0;
 }
 
-fieldset > legend {
-  padding: 12px;
+.application-panel .js-code {
+  position: relative;
 }
 
-fieldset p {
-  clear:both;
+.application-panel .run-button {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+
+.application-panel legend {
+  font-size: 16px;
+}
+
+.esri-widget--button.esri-widget.free-width {
+  width: auto;
+  padding-left: 12px;
+  padding-right: 12px;
 }

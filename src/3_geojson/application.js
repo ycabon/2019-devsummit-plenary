@@ -44,23 +44,22 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/views/MapView", "esri/views/SceneView", "esri/WebMap", "esri/layers/TileLayer", "esri/WebScene", "esri/renderers", "esri/symbols", "../widgets/Header", "../widgets/IconButton", "../widgets/Slider", "../widgets/ToggleIconButton", "esri/support/actions/ActionButton", "esri/layers/GeoJSONLayer", "esri/renderers/visualVariables/SizeVariable", "esri/widgets/Expand", "esri/renderers/smartMapping/statistics/histogram", "esri/views/layers/support/FeatureFilter"], function (require, exports, MapView, SceneView, WebMap, TileLayer, WebScene, renderers_1, symbols_1, Header_1, IconButton_1, Slider_1, ToggleIconButton_1, ActionButton, GeoJSONLayer, SizeVariable, Expand, histogram, FeatureFilter) {
+define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/TileLayer", "esri/renderers", "esri/symbols", "../widgets/Header", "../widgets/ToggleIconButton", "esri/layers/GeoJSONLayer", "esri/renderers/visualVariables/SizeVariable", "esri/renderers/smartMapping/statistics/histogram", "esri/views/layers/support/FeatureFilter"], function (require, exports, MapView, WebMap, TileLayer, renderers_1, symbols_1, Header_1, ToggleIconButton_1, GeoJSONLayer, SizeVariable, histogram, FeatureFilter) {
     "use strict";
     var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
     var map;
-    var scene;
     var mapView;
-    var sceneView;
-    var visibleView;
     function createLayer() {
         return new GeoJSONLayer({
             url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
             title: "USGS Earthquakes",
             copyright: "USGS",
-            // timeInfo: {
-            //   endTimeFie
-            // },
+            popupTemplate: {
+                title: "{title}",
+                content: "\n        Earthquake of magnitude {mag} on {time}.<br />\n      ",
+                outFields: ["url"]
+            },
             fields: [
                 {
                     "name": "mag",
@@ -79,98 +78,19 @@ define(["require", "exports", "esri/views/MapView", "esri/views/SceneView", "esr
                     "type": "string"
                 },
                 {
-                    "name": "detail",
-                    "type": "string"
-                },
-                {
-                    "name": "tsunami",
-                    "type": "double"
-                },
-                {
-                    "name": "ids",
-                    "type": "string"
-                },
-                {
-                    "name": "magType",
-                    "type": "string"
-                },
-                {
-                    "name": "type",
-                    "type": "string"
-                },
-                {
                     "name": "title",
                     "type": "string"
-                },
-                {
-                    "name": "felt",
-                    "type": "double"
                 }
             ],
-            elevationInfo: {
-                mode: "absolute-height",
-                unit: "kilometers",
-                featureExpressionInfo: {
-                    expression: "Geometry($feature).z * -1"
-                }
-            },
-            popupTemplate: {
-                title: "{title}",
-                content: "\n        Earthquake of magnitude {mag} on {time}.<br />\n      ",
-                outFields: ["url"],
-                actions: [
-                    new ActionButton({
-                        id: "more-details",
-                        title: "More details"
-                    })
-                ]
-            },
-            renderer: new renderers_1.ClassBreaksRenderer({
-                field: "mag",
-                classBreakInfos: [
-                    {
-                        minValue: -10,
-                        maxValue: 1,
-                        symbol: new symbols_1.PictureMarkerSymbol({
-                            url: "src/2_geojson/Mag2.png"
-                        })
-                    },
-                    {
-                        minValue: 1,
-                        maxValue: 4,
-                        symbol: new symbols_1.PictureMarkerSymbol({
-                            url: "src/2_geojson/Mag3.png"
-                        })
-                    },
-                    {
-                        minValue: 4,
-                        maxValue: 5,
-                        symbol: new symbols_1.PictureMarkerSymbol({
-                            url: "src/2_geojson/Mag4.png"
-                        })
-                    },
-                    {
-                        minValue: 5,
-                        maxValue: 6,
-                        symbol: new symbols_1.PictureMarkerSymbol({
-                            url: "src/2_geojson/Mag5.png"
-                        })
-                    },
-                    {
-                        minValue: 6,
-                        maxValue: 7,
-                        symbol: new symbols_1.PictureMarkerSymbol({
-                            url: "src/2_geojson/Mag6.png"
-                        })
-                    },
-                    {
-                        minValue: 7,
-                        maxValue: 10,
-                        symbol: new symbols_1.PictureMarkerSymbol({
-                            url: "src/2_geojson/Mag7.png"
-                        })
+            renderer: new renderers_1.SimpleRenderer({
+                symbol: new symbols_1.SimpleMarkerSymbol({
+                    style: "circle",
+                    color: "red",
+                    outline: {
+                        color: "rgba(255,255,255,0.2)",
+                        width: 1
                     }
-                ],
+                }),
                 visualVariables: [
                     new SizeVariable({
                         field: "mag",
@@ -180,8 +100,16 @@ define(["require", "exports", "esri/views/MapView", "esri/views/SceneView", "esr
                         },
                         stops: [{
                                 value: 2.5,
-                                size: 12,
+                                size: 2,
                                 label: "> 2.5"
+                            },
+                            {
+                                value: 5,
+                                size: 10
+                            },
+                            {
+                                value: 6,
+                                size: 20
                             },
                             {
                                 value: 7,
@@ -189,7 +117,7 @@ define(["require", "exports", "esri/views/MapView", "esri/views/SceneView", "esr
                             },
                             {
                                 value: 8,
-                                size: 80,
+                                size: 60,
                                 label: "> 8"
                             }]
                     })
@@ -209,57 +137,16 @@ define(["require", "exports", "esri/views/MapView", "esri/views/SceneView", "esr
                 },
                 layers: [createLayer()]
             });
-            scene = new WebScene({
-                basemap: { portalItem: { id: "39858979a6ba4cfd96005bbe9bd4cf82" } },
-                ground: "world-elevation",
-                layers: [createLayer()]
-            });
-            visibleView = mapView = new MapView({
-                container: "viewContainer",
-                center: [-180, 40],
-                zoom: 3,
+            map.basemap.baseLayers.getItemAt(0).opacity = 0.90;
+            mapView = new MapView({
+                container: "viewDiv",
                 map: map,
                 ui: {
                     components: ["attribution"]
                 }
             });
-            sceneView = new SceneView({
-                map: scene,
-                qualityProfile: "high",
-                // viewingMode: "local",
-                ui: {
-                    padding: {
-                        top: 80
-                    },
-                    components: ["attribution"]
-                },
-                environment: {
-                    background: {
-                        type: "color",
-                        color: "black"
-                    },
-                    starsEnabled: false,
-                    atmosphereEnabled: false
-                }
-            });
-            scene.ground.navigationConstraint = {
-                type: "none"
-            };
             setupUI(mapView);
-            setupUI(sceneView);
             setupSliders(map.layers.getItemAt(0));
-            sceneView.ui.add(new Expand({
-                content: new Slider_1.default({
-                    min: 0,
-                    max: 1,
-                    step: 0.1,
-                    value: 1,
-                    title: "Ground opacity",
-                    action: function (value) {
-                        scene.ground.opacity = value;
-                    }
-                })
-            }), "top-left");
             return [2 /*return*/];
         });
     }); })();
@@ -285,21 +172,6 @@ define(["require", "exports", "esri/views/MapView", "esri/views/SceneView", "esr
                         });
                         view.ui.add(zoom, "bottom-left");
                         view.ui.add(home, "bottom-left");
-                        view.ui.add(new IconButton_1.default({
-                            title: view.type === "2d" ? "3D" : "2D",
-                            action: function () {
-                                var vp = visibleView.viewpoint;
-                                visibleView.container = null;
-                                if (visibleView === mapView) {
-                                    visibleView = sceneView;
-                                }
-                                else {
-                                    visibleView = mapView;
-                                }
-                                visibleView.viewpoint = vp;
-                                visibleView.container = "viewContainer";
-                            }
-                        }), "bottom-left");
                         view.ui.add(new Header_1.default({
                             title: "GeoJSON",
                             actionContent: [
@@ -325,12 +197,10 @@ define(["require", "exports", "esri/views/MapView", "esri/views/SceneView", "esr
     var filter = new FeatureFilter();
     function updateFilter() {
         return __awaiter(this, void 0, void 0, function () {
-            var lv2d, lv3d;
+            var lv2d;
             return __generator(this, function (_a) {
                 lv2d = mapView.layerViews.getItemAt(0);
-                lv3d = sceneView.layerViews.getItemAt(0);
                 lv2d && (lv2d.filter = filter.clone());
-                lv3d && (lv3d.filter = filter.clone());
                 return [2 /*return*/];
             });
         });

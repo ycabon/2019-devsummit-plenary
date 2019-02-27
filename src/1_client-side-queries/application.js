@@ -33,17 +33,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "esri/layers/Layer", "esri/WebMap", "esri/tasks/support/StatisticDefinition", "../widgets/Header", "esri/symbols", "esri/renderers"], function (require, exports, PortalItem, MapView, Layer, WebMap, StatisticDefinition, Header_1, symbols_1, renderers_1) {
+define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "esri/layers/Layer", "esri/WebMap", "esri/tasks/support/StatisticDefinition", "esri/renderers", "esri/symbols", "../widgets/Header", "esri/widgets/Zoom", "esri/widgets/Legend", "esri/widgets/Home", "../widgets/Indicator"], function (require, exports, PortalItem, MapView, Layer, WebMap, StatisticDefinition, renderers_1, symbols_1, Header_1, Zoom, Legend, Home, Indicator_1) {
     "use strict";
     var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
-    var mobile = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod/i);
     var view;
     (function () { return __awaiter(_this, void 0, void 0, function () {
-        var map, layer, _a, Legend, Zoom, Home, Indicator, zoom, home, indicator, counties, countiesLayerView, highlight;
+        var map, layer, indicator, counties, countiesLayerView, highlight;
         var _this = this;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
                     map = new WebMap({
                         basemap: {
@@ -54,14 +53,17 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                     });
                     view = new MapView({
                         container: "viewDiv",
-                        center: [-100, 40],
-                        zoom: 4,
                         map: map,
-                        padding: {
-                            right: 330
+                        center: [-100, 40],
+                        zoom: 3,
+                        constraints: {
+                            snapToZoom: false,
                         },
                         ui: {
-                            components: ["attribution"]
+                            components: ["attribution"],
+                            padding: {
+                                top: 80
+                            }
                         },
                         popup: null
                     });
@@ -71,39 +73,22 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                             })
                         })];
                 case 1:
-                    layer = _b.sent();
+                    layer = _a.sent();
                     return [4 /*yield*/, layer.loadAll()];
                 case 2:
-                    _b.sent();
+                    _a.sent();
                     layer.layers.forEach(function (layer) {
                         layer.outFields = ["B23025_003E", "B23025_005E"];
                     });
                     map.add(layer);
                     return [4 /*yield*/, view.whenLayerView(layer)];
                 case 3:
-                    _b.sent();
-                    return [4 /*yield*/, Promise.all([
-                            new Promise(function (resolve_1, reject_1) { require(["esri/widgets/Legend"], resolve_1, reject_1); }),
-                            new Promise(function (resolve_2, reject_2) { require(["esri/widgets/Zoom"], resolve_2, reject_2); }),
-                            new Promise(function (resolve_3, reject_3) { require(["esri/widgets/Home"], resolve_3, reject_3); }),
-                            new Promise(function (resolve_4, reject_4) { require(["../widgets/Indicator"], resolve_4, reject_4); })
-                        ])];
-                case 4:
-                    _a = _b.sent(), Legend = _a[0], Zoom = _a[1], Home = _a[2], Indicator = _a[3].default;
-                    zoom = new Zoom({
-                        view: view,
-                        layout: "horizontal"
-                    });
-                    home = new Home({
-                        view: view
-                    });
-                    view.ui.add(zoom, "bottom-left");
-                    view.ui.add(home, "bottom-left");
-                    new Legend({
-                        container: "legend",
-                        view: view
-                    });
-                    indicator = new Indicator({
+                    _a.sent();
+                    view.ui.add(new Header_1.default({ title: "Client-side queries" }));
+                    view.ui.add(new Zoom({ view: view, layout: "horizontal" }), "bottom-right");
+                    view.ui.add(new Home({ view: view }), "bottom-right");
+                    new Legend({ view: view, container: "legend" });
+                    indicator = new Indicator_1.default({
                         container: "indicator",
                         title: "Percent Unemployed",
                         format: new Intl.NumberFormat(undefined, {
@@ -142,16 +127,14 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                         view: view,
                         layer: layer
                     });
-                    view.ui.add(new Header_1.default({
-                        title: "Client-side queries"
-                    }));
                     return [4 /*yield*/, Layer.fromPortalItem({
                             portalItem: new PortalItem({
                                 id: "48f9af87daa241c4b267c5931ad3b226"
                             })
                         })];
-                case 5:
-                    counties = _b.sent();
+                case 4:
+                    counties = _a.sent();
+                    counties.legendEnabled = false;
                     counties.outFields = ["NAME"];
                     counties.renderer = new renderers_1.SimpleRenderer({
                         symbol: new symbols_1.SimpleFillSymbol({
@@ -161,8 +144,8 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                     });
                     view.map.add(counties);
                     return [4 /*yield*/, view.whenLayerView(counties)];
-                case 6:
-                    countiesLayerView = _b.sent();
+                case 5:
+                    countiesLayerView = _a.sent();
                     view.highlightOptions = {
                         fillOpacity: 0,
                         color: "white",

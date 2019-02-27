@@ -43,8 +43,9 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
         //
         //--------------------------------------------------------------------------
         Slider.prototype.render = function () {
+            var titleNode = this.title ? widget_1.tsx("span", { class: CSS.title }, this.title) : null;
             return (widget_1.tsx("div", { bind: this, class: CSS.base },
-                widget_1.tsx("span", { class: CSS.title }, this.title),
+                titleNode,
                 widget_1.tsx("input", { bind: this, class: CSS.value, onchange: this._changeHandler, oninput: this._changeHandler, type: "range", min: this.min, max: this.max, step: this.step, value: this.value })));
         };
         Slider.prototype._changeHandler = function (event) {

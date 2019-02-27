@@ -14,14 +14,98 @@
   <link rel="stylesheet" href="./src/widgets/ToggleIconButton.css">
   <link rel="stylesheet" href="./src/widgets/Slider.css">
   <link rel="stylesheet" href="https://jsdev.arcgis.com/4.11/esri/themes/dark-blue/main.css">
+
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.5/build/styles/agate.min.css">
 </head>
 
 <body>
   <div class="application">
     <div id="viewDiv" class="mapping" style="display: flex;"></div>
   </div>
+
+  <div id="layerPanel" class="esri-widget application-panel" style="width: auto;">
+    <fieldset>
+      <legend>Add GeoJSONLayer</legend>
+      <div class="js-code">
+        <div id="addGeoJSONLayerButton" class="run-button esri-widget esri-widget--button esri-icon-play" role="button"></div>
+        <pre><code class="javascript">const url = &quot;https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson&quot;;
+
+const layer = new GeoJSONLayer({
+  url,
+  title: &quot;USGS Earthquakes&quot;,
+  copyright: &quot;USGS&quot;,
+  definitionExpression: &quot;type = 'earthquake'&quot;,
+  popupTemplate: {
+    title: `{title}`,
+    content: `
+      Earthquake of magnitude {mag} on {time}.&lt;br /&gt;
+      &lt;a href=&quot;{url}&quot; &gt;More details...&lt;/a&gt;
+    `
+  }
+});</code></pre>
+      </div>
+    </fieldset>
+  </div>
+
+  <div id="elevationPanel"  class="esri-widget application-panel">
+    <fieldset>
+      <legend>Elevation</legend>
+      <div class="js-code">
+        <div id="applyElevationInfoButton" class="run-button esri-widget esri-widget--button esri-icon-play" role="button"></div>
+        <pre><code class="javascript">layer.elevationInfo = {
+  mode: "absolute-height",
+  unit: "kilometers",
+  featureExpressionInfo: {
+    expression: "Geometry($feature).z * -1"
+  }
+};</code></pre>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Ground Opacity</legend>
+      <div class="js-code">
+        <pre><code id="groundOpacityCode" class="javascript">scene.ground.opacity = 1;</code></pre>
+      </div>
+      <div id="opacitySlider"></div>
+    </fieldset>
+  </div>
+
+  <div id="rendererPanel"  class="esri-widget application-panel">
+    <fieldset>
+      <legend>Renderer</legend>
+      <div class="js-code">
+        <div id="applyRendererButton" class="run-button esri-widget esri-widget--button esri-icon-play" role="button"></div>
+        <pre><code class="javascript">layer.renderer = new SimpleRenderer({
+  symbol: new PointSymbol3D({
+    symbolLayers: [
+      new ObjectSymbol3DLayer({
+        resource: {
+          primitive: &quot;sphere&quot;
+        }
+      })
+    ]
+  }),
+  visualVariables: [
+    new ColorVariable({
+      field: &quot;mag&quot;,
+      stops: [{ value: 1, color: &quot;white&quot; }, { value: 5, color: &quot;red&quot; }]
+    }),
+    new SizeVariable({
+      field: &quot;mag&quot;,
+      axis: &quot;all&quot;,
+      stops: [{ value: 2, size: 500 }, { value: 7, size: 10000 }]
+    })
+  ]
+});</code></pre>
+      </div>
+    </fieldset>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.15.5/build/highlight.min.js"></script>
   <script src="src/config.js"></script>
   <script src="https://jsdev.arcgis.com/4.11/dojo/dojo.js"></script>
+
+  <script>hljs.initHighlightingOnLoad();</script>
   <!-- <script src="http://ycabon.esri.com/arcgis-js-api-4/test-apps/dojo-config.js"></script>
   <script src="http://ycabon.esri.com/arcgis-js-api-4/dojo/dojo.js"></script> -->
 </body>

@@ -6,18 +6,22 @@ import FeatureLayer = require("esri/layers/FeatureLayer");
 import WebMap = require("esri/WebMap");
 import StatisticDefinition = require("esri/tasks/support/StatisticDefinition");
 import FeatureLayerView = require("esri/views/layers/FeatureLayerView");
-import Header from "../widgets/Header";
-import { SimpleFillSymbol } from "esri/symbols";
 import { Polygon } from "esri/geometry";
 import { SimpleRenderer } from "esri/renderers";
+import { SimpleFillSymbol } from "esri/symbols";
+import Header from "../widgets/Header";
 
-const mobile = !!navigator.userAgent.match(/Android|iPhone|iPad|iPod/i);
+import Expand = require("esri/widgets/Expand");
+import Zoom = require("esri/widgets/Zoom");
+import Legend = require("esri/widgets/Legend");
+import Home = require("esri/widgets/Home");
+import Indicator from "../widgets/Indicator";
 
 let view: MapView;
 
 (async () => {
 
-  const map = new WebMap ({
+  const map = new WebMap({
     basemap: {
       portalItem: {
         id: "4f2e99ba65e34bb8af49733d9778fb8e"
@@ -27,14 +31,17 @@ let view: MapView;
 
   view = new MapView({
     container: "viewDiv",
-    center: [-100, 40],
-    zoom: 4,
     map,
-    padding: {
-      right: 330
+    center: [-100, 40],
+    zoom: 3,
+    constraints: {
+      snapToZoom: false,
     },
     ui: {
-      components: ["attribution"]
+      components: ["attribution"],
+      padding: {
+        top: 80
+      }
     },
     popup: null
   });
@@ -48,32 +55,14 @@ let view: MapView;
   layer.layers.forEach((layer: FeatureLayer) => {
     layer.outFields = ["B23025_003E", "B23025_005E"];
   })
-
   map.add(layer);
   await view.whenLayerView(layer);
 
-  const [Legend, Zoom, Home, { default: Indicator }] = await Promise.all([
-    import("esri/widgets/Legend"),
-    import("esri/widgets/Zoom"),
-    import("esri/widgets/Home"),
-    import("../widgets/Indicator")
-  ])
-  const zoom = new Zoom({
-    view,
-    layout: "horizontal"
-  });
-  const home = new Home({
-    view
-  });
+  view.ui.add(new Header({ title: "Client-side queries" }));
+  view.ui.add(new Zoom({ view, layout: "horizontal" }), "bottom-right");
+  view.ui.add(new Home({ view }), "bottom-right");
 
-  view.ui.add(zoom, "bottom-left");
-  view.ui.add(home, "bottom-left");
-
-  new Legend({
-    container: "legend",
-    view
-  });
-
+  new Legend({ view, container: "legend" });
   const indicator = new Indicator({
     container: "indicator",
     title: "Percent Unemployed",
@@ -111,15 +100,12 @@ let view: MapView;
     layer
   });
 
-  view.ui.add(new Header({
-    title: "Client-side queries"
-  }));
-
   const counties = await Layer.fromPortalItem({
     portalItem: new PortalItem({
       id: "48f9af87daa241c4b267c5931ad3b226"
     })
   }) as FeatureLayer;
+  counties.legendEnabled = false;
   counties.outFields = ["NAME"];
   counties.renderer = new SimpleRenderer({
     symbol: new SimpleFillSymbol({
@@ -128,6 +114,7 @@ let view: MapView;
     })
   });
   view.map.add(counties);
+
   const countiesLayerView = await view.whenLayerView(counties) as FeatureLayerView;
   view.highlightOptions = {
     fillOpacity: 0,
