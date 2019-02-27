@@ -18,7 +18,7 @@ const layer = new GeoJSONLayer({
   url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
   title: "USGS Earthquakes",
   copyright: "USGS",
-  definitionExpression: "type = 'earthquake'",
+  definitionExpression: "type = 'earthquake' and mag > 0",
   popupTemplate: {
     title: `{title}`,
     content: `
@@ -162,7 +162,7 @@ view.ui.add(
     expandIconClass: "esri-icon-feature-layer",
     expandTooltip: "Layer",
     content: $("#layerPanel"),
-    expanded: true,
+    expanded: false,
     group: "group1",
     view
   }),

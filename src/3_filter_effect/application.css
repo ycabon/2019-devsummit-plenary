@@ -87,8 +87,8 @@ body {
 }
 
 .histogram-slider .histogram .bar .content {
-  margin-left: 2px;
-  margin-right: 2px;
+  /* margin-left: 2px;
+  margin-right: 2px; */
   background: #69dcff;
 }
 
@@ -161,4 +161,21 @@ fieldset > legend {
 
 fieldset p {
   clear:both;
+}
+
+.histogram-slider-wrapper.vertical {
+  height: 200px;
+}
+
+.histogram-slider-wrapper.vertical .histogram-slider{
+  width: 160px;
+  height: 160px;
+  transform: rotate(90deg);
+}
+
+.histogram-slider-wrapper.vertical .histogram-slider .histogram {
+  width: 160px;
+  height: 127px;
+  padding-left: 0;
+  padding-right: 0;
 }

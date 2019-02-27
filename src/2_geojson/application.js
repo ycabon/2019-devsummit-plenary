@@ -5,7 +5,7 @@ define(["require", "exports", "esri/WebScene", "esri/views/SceneView", "esri/lay
         url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson",
         title: "USGS Earthquakes",
         copyright: "USGS",
-        definitionExpression: "type = 'earthquake'",
+        definitionExpression: "type = 'earthquake' and mag > 0",
         popupTemplate: {
             title: "{title}",
             content: "\n      Earthquake of magnitude {mag} on {time}.<br />\n      <a href=\"{url}\" target=\"_blank\" class=\"esri-popup__button\">More details...</a>\n    "
@@ -135,7 +135,7 @@ define(["require", "exports", "esri/WebScene", "esri/views/SceneView", "esri/lay
         expandIconClass: "esri-icon-feature-layer",
         expandTooltip: "Layer",
         content: $("#layerPanel"),
-        expanded: true,
+        expanded: false,
         group: "group1",
         view: view
     }), "top-left");

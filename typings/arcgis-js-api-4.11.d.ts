@@ -8733,6 +8733,8 @@ declare namespace __esri {
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-GeoJSONLayer.html#copyright)
      */
     copyright: string;
+
+    outFields: string[];
     /**
      * The SQL where clause used to filter features on the client. Only the features that satisfy the definitionexpression are displayed in the [View](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-View.html).Definition expressions may be set when a layer is constructed prior to it loading in the view orafter it has been added to the map. If the definition expression is set after the layer has been added to the map, the view willautomatically refresh itself to display the features that satisfy the new definition expression.
      *
@@ -8951,6 +8953,8 @@ declare namespace __esri {
   export const GeoJSONLayer: GeoJSONLayerConstructor;
 
   interface GeoJSONLayerProperties extends LayerProperties {
+
+    outFields?: string[];
     /**
      * Copyright information for the layer.
      *
@@ -24187,7 +24191,7 @@ declare namespace __esri {
      *
      * [Read more...](https://developers.arcgis.com/javascript/latest/api-reference/esri-renderers-smartMapping-statistics-histogram.html#histogram)
      */
-    layer: FeatureLayer | SceneLayer | CSVLayer | PointCloudLayer;
+    layer: FeatureLayer | SceneLayer | CSVLayer | PointCloudLayer | GeoJSONLayer;
     /**
      * The name of the numeric field for which the histogram will be generated.  This property is ignored if a `valueExpression` is used.
      *

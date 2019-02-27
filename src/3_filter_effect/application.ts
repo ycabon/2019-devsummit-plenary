@@ -1,19 +1,24 @@
-import request = require("esri/request");
 import MapView = require("esri/views/MapView");
 import WebMap = require("esri/WebMap");
 import TileLayer = require("esri/layers/TileLayer");
+import { whenFalse } from "esri/core/watchUtils";
 import { SimpleRenderer } from "esri/renderers";
 import { SimpleMarkerSymbol } from "esri/symbols";
 import Header from "../widgets/Header";
 import GeoJSONLayer = require("esri/layers/GeoJSONLayer");
 import SizeVariable = require("esri/renderers/visualVariables/SizeVariable");
-import histogram = require("esri/renderers/smartMapping/statistics/histogram");
 import FeatureFilter = require("esri/views/layers/support/FeatureFilter");
+import FeatureEffect = require("esri/views/layers/support/FeatureEffect");
 import FeatureLayerView = require("esri/views/layers/FeatureLayerView");
+import IconButton from "../widgets/IconButton";
+import StatisticDefinition = require("esri/tasks/support/StatisticDefinition");
+import BasemapToggle = require("esri/widgets/BasemapToggle");
+import Basemap = require("esri/Basemap");
 
 import Expand = require("esri/widgets/Expand");
 import Zoom = require("esri/widgets/Zoom");
 import Home = require("esri/widgets/Home");
+import { Extent } from "esri/geometry";
 
 const hljs = (window as any)["hljs"];
 let map: WebMap;
@@ -40,7 +45,7 @@ let view: MapView;
     url,
     title: "USGS Earthquakes",
     copyright: "USGS",
-    definitionExpression: "type = 'earthquake'",
+    definitionExpression: "type = 'earthquake' AND depth > 0 AND mag > 0",
     popupTemplate: {
       title: `{title}`,
       content: `
@@ -48,6 +53,7 @@ let view: MapView;
       <a href="{url}" target="_blank" class="esri-popup__button">More details...</a>
     `
     },
+    outFields: ["depth"],
     fields: [
       { "name": "mag", "type": "double" },
       { "name": "place", "type": "string" },
@@ -75,7 +81,7 @@ let view: MapView;
           },
           stops: [{
             value: 2.5,
-            size: 4,
+            size: 6,
             label: "> 2.5"
           }, {
             value: 6,
@@ -95,7 +101,8 @@ let view: MapView;
     basemap: {
       baseLayers: [
         new TileLayer({
-          url: "https://tilesdevext.arcgis.com/tiles/LkFyxb9zDq7vAOAm/arcgis/rest/services/VintageHillshadeEqualEarth_Pacific/MapServer"
+          url: "https://tilesdevext.arcgis.com/tiles/LkFyxb9zDq7vAOAm/arcgis/rest/services/VintageHillshadeEqualEarth_Pacific/MapServer",
+          opacity: 0.7
         })
       ]
     },
@@ -103,8 +110,6 @@ let view: MapView;
       layer
     ]
   });
-
-  map.basemap.baseLayers.getItemAt(0).opacity = 1;
 
   view = new MapView({
     container: "viewDiv",
@@ -114,13 +119,32 @@ let view: MapView;
         top: 80
       },
       components: ["attribution"]
+    },
+    constraints: {
+      snapToZoom: false
     }
   });
+  (window as any).view = view;
+
+  const basemapGeoJSON = new GeoJSONLayer({
+    url: "https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector/geojson/ne_110m_land.geojson",
+    // https://github.com/nvkelso/natural-earth-vector/blob/master/LICENSE.md
+    copyright: "Made with Natural Earth."
+  });
+  basemapGeoJSON.load();
 
   const $ = document.querySelector.bind(document);
   view.ui.add(new Zoom({ view, layout: "horizontal" }), "bottom-right");
   view.ui.add(new Home({ view }), "bottom-right");
   view.ui.add(new Header({ title: "Filter & Effect" }));
+  view.ui.add(new BasemapToggle({
+    view,
+    nextBasemap: new Basemap({
+      baseLayers: [
+        basemapGeoJSON
+      ]
+    })
+  }), "top-right")
   view.ui.add(
     new Expand({
       expandIconClass: "esri-icon-chart",
@@ -134,22 +158,34 @@ let view: MapView;
   );
   view.ui.add(
     new Expand({
-      expandIconClass: "esri-icon-chart",
+      expandIconClass: "esri-icon-environment-settings",
       expandTooltip: "Effect",
       content: $("#effectPanel"),
-      expanded: true,
+      expanded: false,
       group: "group1",
       view
     }),
     "top-left"
   );
+  view.ui.add(new IconButton({ title: "AK", action: () => {
+    view.goTo(new Extent({
+      "spatialReference": {
+        "wkid": 54037
+      },
+      "xmin": 1345414.6663256646,
+      "ymin": 5482668.016051696,
+      "xmax": 7345581.790848071,
+      "ymax": 8637887.164269127
+    }), {
+      duration: 3000
+    });
+  }}), "bottom-right");
 
-  const magnitudeSlider = await setupSlider(layer, $("#magnitudeSlider"), {
-    field: "mag",
-    minValue: 0,
-    maxValue: 8,
-    numBins: 16
-  });
+  const [magnitudeSlider, depthSlider] = await Promise.all([
+    createSlider(view, layer, $("#magnitudeSlider"), "mag", 16),
+    createSlider(view, layer, $("#depthSlider"), "depth", 32)
+  ]);
+
   magnitudeSlider.onChange = (field, minValue, maxValue) => {
     const layerView = view.layerViews.getItemAt(0) as FeatureLayerView;
     layerView.filter = new FeatureFilter({
@@ -163,81 +199,188 @@ let view: MapView;
     hljs.highlightBlock($("#filterCode"));
   }
 
-  const depthSlider = await setupSlider(layer, $("#depthSlider"), {
-    field: "depth",
-    numBins: 16
-  });
+  depthSlider.onChange = (field, minValue, maxValue) => {
+    const layerView = view.layerViews.getItemAt(0) as FeatureLayerView;
+layerView.effect = new FeatureEffect({
+  outsideEffect: "grayscale(75%) opacity(0.75)",
 
+  filter: new FeatureFilter({
+    where: `depth >= ${minValue} AND depth <= ${maxValue}`
+  })
+});
+    $("#effectCode").innerHTML = `
+layerView.effect = new FeatureEffect({
+  outsideEffect: &quot;grayscale(75%) opacity(0.75)&quot;,
+  insideEffect: &quot;brightness(110%)&quot;,
+  filter: new FeatureFilter({
+    where: \`depth &gt;= ${minValue} AND depth &lt;= ${maxValue}\`
+  })
+});
+  `
+    hljs.highlightBlock($("#effectCode"));
+  }
 
   type SliderHandler = {
     onChange: (field: string, min: number, max: number) => void;
   }
 
-  async function setupSlider(layer: any, element: HTMLElement, options?: {
-    field: string;
-    minValue?: number;
-    maxValue?: number;
-    numBins: number;
-  }): Promise<SliderHandler> {
-    const histogramEl: HTMLDivElement = element.querySelector(".histogram");
+  async function createSlider(view: MapView, layer: GeoJSONLayer, element: HTMLElement, field: string, numBins: number): Promise<SliderHandler> {
+    const layerView = await view.whenLayerView(layer) as FeatureLayerView;
 
-    if (histogramEl) {
-      const histogramElRect = histogramEl.getBoundingClientRect();
-      const result = await histogram({
-        layer,
-        classificationMethod: "equal-interval",
-        ...options
-      });
+    const histogramEl = element.querySelector(".histogram");
+    const histogramElRect = histogramEl.getBoundingClientRect();
+    const minThumbEl: HTMLInputElement = element.querySelector(".thumb-min");
+    const maxThumbEl: HTMLInputElement = element.querySelector(".thumb-max");
+    const minValueEl: HTMLSpanElement = element.querySelector(".thumb-min-value");
+    const maxValueEl: HTMLSpanElement = element.querySelector(".thumb-max-value");
 
-      const maxCount = result.bins.reduce((max, { count }) => Math.max(max, count), -Infinity);
+    let refresh = false;
+    let statsPromise: any = null;
 
-      result.bins.forEach((bin) => {
-        const bar = document.createElement("div");
-        const barContent = document.createElement("div");
-        bar.className = "bar";
-        bar.appendChild(barContent);
-        barContent.className = "content";
-        barContent.style.height = Math.max(1, (bin.count / maxCount) * histogramElRect.height) + "px";
-        histogramEl.appendChild(bar);
-      });
+    function executeAnalysis() {
+      if (statsPromise) {
+        refresh = true;
+        return;
+      }
+
+      refresh = false;
+
+      const extent = view.extent;
+      const query = layerView.layer.createQuery();
+      query.set({
+        geometry: extent,
+        spatialRelationship: "contains",
+        outStatistics: [
+          new StatisticDefinition({
+            onStatisticField: field,
+            outStatisticFieldName: `min_${field}`,
+            statisticType: "min"
+          }),
+          new StatisticDefinition({
+            onStatisticField: field,
+            outStatisticFieldName: `max_${field}`,
+            statisticType: "max"
+          })
+        ]
+      })
+
+      statsPromise = layerView.queryFeatures(query)
+        .then((results) => {
+          let {
+            features: [
+              {
+                attributes: {
+                  [`min_${field}`]: minValue,
+                  [`max_${field}`]: maxValue
+                }
+              }
+            ]
+          } = results;
+
+          minValue = Math.floor(minValue);
+          maxValue = Math.ceil(maxValue);
+          const range = maxValue - minValue;
+          const expr = `FLOOR(((${field} - ${minValue}) / ${range}) * ${numBins})`;
+
+          minThumbEl.min = maxThumbEl.min = "" + minValue;
+          minThumbEl.max = maxThumbEl.max = "" + maxValue;
+
+          minThumbEl.value = "" + Math.max(minValue, +minThumbEl.value);
+          maxThumbEl.value = "" + Math.min(maxValue, +maxThumbEl.value);
+
+          minValueEl.innerHTML = minThumbEl.value;
+          maxValueEl.innerHTML = maxThumbEl.value;
+
+          const query = layerView.layer.createQuery();
+
+          query.set({
+            geometry: view.extent,
+            spatialRelationship: "contains",
+            groupByFieldsForStatistics: [expr],
+            orderByFields: [expr],
+            outStatistics: [
+              new StatisticDefinition({
+                statisticType: "count",
+                outStatisticFieldName: "count",
+                onStatisticField: "1"
+              })
+            ]
+          });
+
+          return layerView.queryFeatures(query);
+        })
+        .then((results) => {
+          const bins: { count: number }[] = results.features.reduce((bins, { attributes }) => {
+            bins[attributes["EXPR_1"]] = { count: attributes["count"] };
+            return bins;
+          }, []);
+
+          for (let i = 0; i < bins.length; i++) {
+            if (!bins[i]) {
+              bins[i] = { count: 0 };
+            }
+          }
+
+          return bins;
+        })
+        .then((bins) => {
+          const maxCount = bins.reduce((max, { count }) => Math.max(max, count), -Infinity);
+
+          histogramEl.innerHTML = "";
+
+          bins.forEach((bin, index) => {
+            const bar = document.createElement("div");
+            const barContent = document.createElement("div");
+            bar.className = "bar";
+            bar.appendChild(barContent);
+            barContent.className = `content bin${index}`;
+            barContent.style.height = Math.max(1, (bin.count / maxCount) * histogramElRect.height) + "px";
+            histogramEl.appendChild(bar);
+          });
+
+          statsPromise = null;
+          if (refresh) {
+            executeAnalysis();
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          statsPromise = null;
+          if (refresh) {
+            executeAnalysis();
+          }
+        });
     }
 
-    const minThumb: HTMLInputElement = element.querySelector(".thumb-min");
-    const maxThumb: HTMLInputElement = element.querySelector(".thumb-max");
-
-    const minValue: HTMLSpanElement = element.querySelector(".thumb-min-value");
-    const maxValue: HTMLSpanElement = element.querySelector(".thumb-max-value");
-
-    minThumb.min = maxThumb.min = "" + options.minValue;
-    minThumb.max = maxThumb.max = "" + options.maxValue;
+    whenFalse(layerView, "updating", executeAnalysis);
 
     const handler: SliderHandler = {
       onChange: null
     }
 
     const onMinChange = (event: Event) => {
-      if (+minThumb.value >= +maxThumb.value) {
-        minThumb.value = "" + (parseFloat(maxThumb.value) - parseFloat(minThumb.step));
+      if (+minThumbEl.value >= +maxThumbEl.value) {
+        minThumbEl.value = "" + (parseFloat(maxThumbEl.value) - parseFloat(minThumbEl.step));
       }
       if (handler.onChange) {
-        handler.onChange(options.field, parseFloat(minThumb.value), parseFloat(maxThumb.value));
+        handler.onChange(field, parseFloat(minThumbEl.value), parseFloat(maxThumbEl.value));
       }
-      minValue.innerHTML = minThumb.value;
+      minValueEl.innerHTML = minThumbEl.value;
     };
     const onMaxChange = () => {
-      if (+minThumb.value >= +maxThumb.value) {
-        maxThumb.value = "" + (parseFloat(minThumb.value) + parseFloat(maxThumb.step));
+      if (+minThumbEl.value >= +maxThumbEl.value) {
+        maxThumbEl.value = "" + (parseFloat(minThumbEl.value) + parseFloat(maxThumbEl.step));
       }
-      maxValue.innerHTML = maxThumb.value;
+      maxValueEl.innerHTML = maxThumbEl.value;
       if (handler.onChange) {
-        handler.onChange(options.field, parseFloat(minThumb.value), parseFloat(maxThumb.value));
+        handler.onChange(field, parseFloat(minThumbEl.value), parseFloat(maxThumbEl.value));
       }
     };
 
-    minThumb.addEventListener("change", onMinChange);
-    minThumb.addEventListener("input", onMinChange);
-    maxThumb.addEventListener("change", onMaxChange);
-    maxThumb.addEventListener("input", onMaxChange);
+    minThumbEl.addEventListener("change", onMinChange);
+    minThumbEl.addEventListener("input", onMinChange);
+    maxThumbEl.addEventListener("change", onMaxChange);
+    maxThumbEl.addEventListener("input", onMaxChange);
 
     return handler;
   }

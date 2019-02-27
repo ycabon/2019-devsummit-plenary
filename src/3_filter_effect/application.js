@@ -1,14 +1,3 @@
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -44,7 +33,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/TileLayer", "esri/renderers", "esri/symbols", "../widgets/Header", "esri/layers/GeoJSONLayer", "esri/renderers/visualVariables/SizeVariable", "esri/renderers/smartMapping/statistics/histogram", "esri/views/layers/support/FeatureFilter", "esri/widgets/Expand", "esri/widgets/Zoom", "esri/widgets/Home"], function (require, exports, MapView, WebMap, TileLayer, renderers_1, symbols_1, Header_1, GeoJSONLayer, SizeVariable, histogram, FeatureFilter, Expand, Zoom, Home) {
+define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/TileLayer", "esri/core/watchUtils", "esri/renderers", "esri/symbols", "../widgets/Header", "esri/layers/GeoJSONLayer", "esri/renderers/visualVariables/SizeVariable", "esri/views/layers/support/FeatureFilter", "esri/views/layers/support/FeatureEffect", "../widgets/IconButton", "esri/tasks/support/StatisticDefinition", "esri/widgets/BasemapToggle", "esri/Basemap", "esri/widgets/Expand", "esri/widgets/Zoom", "esri/widgets/Home", "esri/geometry"], function (require, exports, MapView, WebMap, TileLayer, watchUtils_1, renderers_1, symbols_1, Header_1, GeoJSONLayer, SizeVariable, FeatureFilter, FeatureEffect, IconButton_1, StatisticDefinition, BasemapToggle, Basemap, Expand, Zoom, Home, geometry_1) {
     "use strict";
     var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -52,78 +41,156 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/
     var map;
     var view;
     (function () { return __awaiter(_this, void 0, void 0, function () {
-        function setupSlider(layer, element, options) {
+        function createSlider(view, layer, element, field, numBins) {
             return __awaiter(this, void 0, void 0, function () {
-                var histogramEl, histogramElRect_1, result, maxCount_1, minThumb, maxThumb, minValue, maxValue, handler, onMinChange, onMaxChange;
+                function executeAnalysis() {
+                    if (statsPromise) {
+                        refresh = true;
+                        return;
+                    }
+                    refresh = false;
+                    var extent = view.extent;
+                    var query = layerView.layer.createQuery();
+                    query.set({
+                        geometry: extent,
+                        spatialRelationship: "contains",
+                        outStatistics: [
+                            new StatisticDefinition({
+                                onStatisticField: field,
+                                outStatisticFieldName: "min_" + field,
+                                statisticType: "min"
+                            }),
+                            new StatisticDefinition({
+                                onStatisticField: field,
+                                outStatisticFieldName: "max_" + field,
+                                statisticType: "max"
+                            })
+                        ]
+                    });
+                    statsPromise = layerView.queryFeatures(query)
+                        .then(function (results) {
+                        var _a = results.features[0].attributes, _b = "min_" + field, minValue = _a[_b], _c = "max_" + field, maxValue = _a[_c];
+                        minValue = Math.floor(minValue);
+                        maxValue = Math.ceil(maxValue);
+                        var range = maxValue - minValue;
+                        var expr = "FLOOR(((" + field + " - " + minValue + ") / " + range + ") * " + numBins + ")";
+                        minThumbEl.min = maxThumbEl.min = "" + minValue;
+                        minThumbEl.max = maxThumbEl.max = "" + maxValue;
+                        minThumbEl.value = "" + Math.max(minValue, +minThumbEl.value);
+                        maxThumbEl.value = "" + Math.min(maxValue, +maxThumbEl.value);
+                        minValueEl.innerHTML = minThumbEl.value;
+                        maxValueEl.innerHTML = maxThumbEl.value;
+                        var query = layerView.layer.createQuery();
+                        query.set({
+                            geometry: view.extent,
+                            spatialRelationship: "contains",
+                            groupByFieldsForStatistics: [expr],
+                            orderByFields: [expr],
+                            outStatistics: [
+                                new StatisticDefinition({
+                                    statisticType: "count",
+                                    outStatisticFieldName: "count",
+                                    onStatisticField: "1"
+                                })
+                            ]
+                        });
+                        return layerView.queryFeatures(query);
+                    })
+                        .then(function (results) {
+                        var bins = results.features.reduce(function (bins, _a) {
+                            var attributes = _a.attributes;
+                            bins[attributes["EXPR_1"]] = { count: attributes["count"] };
+                            return bins;
+                        }, []);
+                        for (var i = 0; i < bins.length; i++) {
+                            if (!bins[i]) {
+                                bins[i] = { count: 0 };
+                            }
+                        }
+                        return bins;
+                    })
+                        .then(function (bins) {
+                        var maxCount = bins.reduce(function (max, _a) {
+                            var count = _a.count;
+                            return Math.max(max, count);
+                        }, -Infinity);
+                        histogramEl.innerHTML = "";
+                        bins.forEach(function (bin, index) {
+                            var bar = document.createElement("div");
+                            var barContent = document.createElement("div");
+                            bar.className = "bar";
+                            bar.appendChild(barContent);
+                            barContent.className = "content bin" + index;
+                            barContent.style.height = Math.max(1, (bin.count / maxCount) * histogramElRect.height) + "px";
+                            histogramEl.appendChild(bar);
+                        });
+                        statsPromise = null;
+                        if (refresh) {
+                            executeAnalysis();
+                        }
+                    })
+                        .catch(function (error) {
+                        console.error(error);
+                        statsPromise = null;
+                        if (refresh) {
+                            executeAnalysis();
+                        }
+                    });
+                }
+                var layerView, histogramEl, histogramElRect, minThumbEl, maxThumbEl, minValueEl, maxValueEl, refresh, statsPromise, handler, onMinChange, onMaxChange;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0:
-                            histogramEl = element.querySelector(".histogram");
-                            if (!histogramEl) return [3 /*break*/, 2];
-                            histogramElRect_1 = histogramEl.getBoundingClientRect();
-                            return [4 /*yield*/, histogram(__assign({ layer: layer, classificationMethod: "equal-interval" }, options))];
+                        case 0: return [4 /*yield*/, view.whenLayerView(layer)];
                         case 1:
-                            result = _a.sent();
-                            maxCount_1 = result.bins.reduce(function (max, _a) {
-                                var count = _a.count;
-                                return Math.max(max, count);
-                            }, -Infinity);
-                            result.bins.forEach(function (bin) {
-                                var bar = document.createElement("div");
-                                var barContent = document.createElement("div");
-                                bar.className = "bar";
-                                bar.appendChild(barContent);
-                                barContent.className = "content";
-                                barContent.style.height = Math.max(1, (bin.count / maxCount_1) * histogramElRect_1.height) + "px";
-                                histogramEl.appendChild(bar);
-                            });
-                            _a.label = 2;
-                        case 2:
-                            minThumb = element.querySelector(".thumb-min");
-                            maxThumb = element.querySelector(".thumb-max");
-                            minValue = element.querySelector(".thumb-min-value");
-                            maxValue = element.querySelector(".thumb-max-value");
-                            minThumb.min = maxThumb.min = "" + options.minValue;
-                            minThumb.max = maxThumb.max = "" + options.maxValue;
+                            layerView = _a.sent();
+                            histogramEl = element.querySelector(".histogram");
+                            histogramElRect = histogramEl.getBoundingClientRect();
+                            minThumbEl = element.querySelector(".thumb-min");
+                            maxThumbEl = element.querySelector(".thumb-max");
+                            minValueEl = element.querySelector(".thumb-min-value");
+                            maxValueEl = element.querySelector(".thumb-max-value");
+                            refresh = false;
+                            statsPromise = null;
+                            watchUtils_1.whenFalse(layerView, "updating", executeAnalysis);
                             handler = {
                                 onChange: null
                             };
                             onMinChange = function (event) {
-                                if (+minThumb.value >= +maxThumb.value) {
-                                    minThumb.value = "" + (parseFloat(maxThumb.value) - parseFloat(minThumb.step));
+                                if (+minThumbEl.value >= +maxThumbEl.value) {
+                                    minThumbEl.value = "" + (parseFloat(maxThumbEl.value) - parseFloat(minThumbEl.step));
                                 }
                                 if (handler.onChange) {
-                                    handler.onChange(options.field, parseFloat(minThumb.value), parseFloat(maxThumb.value));
+                                    handler.onChange(field, parseFloat(minThumbEl.value), parseFloat(maxThumbEl.value));
                                 }
-                                minValue.innerHTML = minThumb.value;
+                                minValueEl.innerHTML = minThumbEl.value;
                             };
                             onMaxChange = function () {
-                                if (+minThumb.value >= +maxThumb.value) {
-                                    maxThumb.value = "" + (parseFloat(minThumb.value) + parseFloat(maxThumb.step));
+                                if (+minThumbEl.value >= +maxThumbEl.value) {
+                                    maxThumbEl.value = "" + (parseFloat(minThumbEl.value) + parseFloat(maxThumbEl.step));
                                 }
-                                maxValue.innerHTML = maxThumb.value;
+                                maxValueEl.innerHTML = maxThumbEl.value;
                                 if (handler.onChange) {
-                                    handler.onChange(options.field, parseFloat(minThumb.value), parseFloat(maxThumb.value));
+                                    handler.onChange(field, parseFloat(minThumbEl.value), parseFloat(maxThumbEl.value));
                                 }
                             };
-                            minThumb.addEventListener("change", onMinChange);
-                            minThumb.addEventListener("input", onMinChange);
-                            maxThumb.addEventListener("change", onMaxChange);
-                            maxThumb.addEventListener("input", onMaxChange);
+                            minThumbEl.addEventListener("change", onMinChange);
+                            minThumbEl.addEventListener("input", onMinChange);
+                            maxThumbEl.addEventListener("change", onMaxChange);
+                            maxThumbEl.addEventListener("input", onMaxChange);
                             return [2 /*return*/, handler];
                     }
                 });
             });
         }
-        var response, geojson, url, layer, $, magnitudeSlider, depthSlider;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var response, geojson, url, layer, basemapGeoJSON, $, _a, magnitudeSlider, depthSlider;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0: return [4 /*yield*/, fetch("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson")];
                 case 1:
-                    response = _a.sent();
+                    response = _b.sent();
                     return [4 /*yield*/, response.json()];
                 case 2:
-                    geojson = _a.sent();
+                    geojson = _b.sent();
                     geojson.features.forEach(function (_a) {
                         var coordinates = _a.geometry.coordinates, properties = _a.properties;
                         properties.depth = coordinates[2];
@@ -135,11 +202,12 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/
                         url: url,
                         title: "USGS Earthquakes",
                         copyright: "USGS",
-                        definitionExpression: "type = 'earthquake'",
+                        definitionExpression: "type = 'earthquake' AND depth > 0 AND mag > 0",
                         popupTemplate: {
                             title: "{title}",
                             content: "\n      Earthquake of magnitude {mag} on {time}.<br />\n      <a href=\"{url}\" target=\"_blank\" class=\"esri-popup__button\">More details...</a>\n    "
                         },
+                        outFields: ["depth"],
                         fields: [
                             { "name": "mag", "type": "double" },
                             { "name": "place", "type": "string" },
@@ -167,7 +235,7 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/
                                     },
                                     stops: [{
                                             value: 2.5,
-                                            size: 4,
+                                            size: 6,
                                             label: "> 2.5"
                                         }, {
                                             value: 6,
@@ -186,7 +254,8 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/
                         basemap: {
                             baseLayers: [
                                 new TileLayer({
-                                    url: "https://tilesdevext.arcgis.com/tiles/LkFyxb9zDq7vAOAm/arcgis/rest/services/VintageHillshadeEqualEarth_Pacific/MapServer"
+                                    url: "https://tilesdevext.arcgis.com/tiles/LkFyxb9zDq7vAOAm/arcgis/rest/services/VintageHillshadeEqualEarth_Pacific/MapServer",
+                                    opacity: 0.7
                                 })
                             ]
                         },
@@ -194,7 +263,6 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/
                             layer
                         ]
                     });
-                    map.basemap.baseLayers.getItemAt(0).opacity = 1;
                     view = new MapView({
                         container: "viewDiv",
                         map: map,
@@ -203,12 +271,30 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/
                                 top: 80
                             },
                             components: ["attribution"]
+                        },
+                        constraints: {
+                            snapToZoom: false
                         }
                     });
+                    window.view = view;
+                    basemapGeoJSON = new GeoJSONLayer({
+                        url: "https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector/geojson/ne_110m_land.geojson",
+                        // https://github.com/nvkelso/natural-earth-vector/blob/master/LICENSE.md
+                        copyright: "Made with Natural Earth."
+                    });
+                    basemapGeoJSON.load();
                     $ = document.querySelector.bind(document);
                     view.ui.add(new Zoom({ view: view, layout: "horizontal" }), "bottom-right");
                     view.ui.add(new Home({ view: view }), "bottom-right");
                     view.ui.add(new Header_1.default({ title: "Filter & Effect" }));
+                    view.ui.add(new BasemapToggle({
+                        view: view,
+                        nextBasemap: new Basemap({
+                            baseLayers: [
+                                basemapGeoJSON
+                            ]
+                        })
+                    }), "top-right");
                     view.ui.add(new Expand({
                         expandIconClass: "esri-icon-chart",
                         expandTooltip: "Filter by magnitude",
@@ -218,21 +304,32 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/
                         view: view
                     }), "top-left");
                     view.ui.add(new Expand({
-                        expandIconClass: "esri-icon-chart",
+                        expandIconClass: "esri-icon-environment-settings",
                         expandTooltip: "Effect",
                         content: $("#effectPanel"),
-                        expanded: true,
+                        expanded: false,
                         group: "group1",
                         view: view
                     }), "top-left");
-                    return [4 /*yield*/, setupSlider(layer, $("#magnitudeSlider"), {
-                            field: "mag",
-                            minValue: 0,
-                            maxValue: 8,
-                            numBins: 16
-                        })];
+                    view.ui.add(new IconButton_1.default({ title: "AK", action: function () {
+                            view.goTo(new geometry_1.Extent({
+                                "spatialReference": {
+                                    "wkid": 54037
+                                },
+                                "xmin": 1345414.6663256646,
+                                "ymin": 5482668.016051696,
+                                "xmax": 7345581.790848071,
+                                "ymax": 8637887.164269127
+                            }), {
+                                duration: 3000
+                            });
+                        } }), "bottom-right");
+                    return [4 /*yield*/, Promise.all([
+                            createSlider(view, layer, $("#magnitudeSlider"), "mag", 16),
+                            createSlider(view, layer, $("#depthSlider"), "depth", 32)
+                        ])];
                 case 3:
-                    magnitudeSlider = _a.sent();
+                    _a = _b.sent(), magnitudeSlider = _a[0], depthSlider = _a[1];
                     magnitudeSlider.onChange = function (field, minValue, maxValue) {
                         var layerView = view.layerViews.getItemAt(0);
                         layerView.filter = new FeatureFilter({
@@ -241,12 +338,17 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/
                         $("#filterCode").innerHTML = "\n  layerView.filter = new FeatureFilter({\n    where: `mag &gt;= " + minValue + " AND mag &lt;= " + maxValue + "`\n  });\n  ";
                         hljs.highlightBlock($("#filterCode"));
                     };
-                    return [4 /*yield*/, setupSlider(layer, $("#depthSlider"), {
-                            field: "depth",
-                            numBins: 16
-                        })];
-                case 4:
-                    depthSlider = _a.sent();
+                    depthSlider.onChange = function (field, minValue, maxValue) {
+                        var layerView = view.layerViews.getItemAt(0);
+                        layerView.effect = new FeatureEffect({
+                            outsideEffect: "grayscale(75%) opacity(0.75)",
+                            filter: new FeatureFilter({
+                                where: "depth >= " + minValue + " AND depth <= " + maxValue
+                            })
+                        });
+                        $("#effectCode").innerHTML = "\nlayerView.effect = new FeatureEffect({\n  outsideEffect: &quot;grayscale(75%) opacity(0.75)&quot;,\n  insideEffect: &quot;brightness(110%)&quot;,\n  filter: new FeatureFilter({\n    where: `depth &gt;= " + minValue + " AND depth &lt;= " + maxValue + "`\n  })\n});\n  ";
+                        hljs.highlightBlock($("#effectCode"));
+                    };
                     return [2 /*return*/];
             }
         });
