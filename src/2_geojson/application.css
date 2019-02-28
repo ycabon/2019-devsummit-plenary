@@ -6,6 +6,10 @@ body {
   margin: 0;
 }
 
+.hljs {
+  font-size: 150%;
+}
+
 .application {
   position: absolute;
   width: 100%;

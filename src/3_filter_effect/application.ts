@@ -100,10 +100,19 @@ let view: MapView;
   map = new WebMap({
     basemap: {
       baseLayers: [
-        new TileLayer({
-          url: "https://tilesdevext.arcgis.com/tiles/LkFyxb9zDq7vAOAm/arcgis/rest/services/VintageHillshadeEqualEarth_Pacific/MapServer",
-          opacity: 0.7
+        new GeoJSONLayer({
+          url: "https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector/geojson/ne_110m_land.geojson",
+          // https://github.com/nvkelso/natural-earth-vector/blob/master/LICENSE.md
+          copyright: "Made with Natural Earth.",
+          opacity: 0.7,
+          spatialReference: {
+            wkid: 54037
+          }
         })
+        // new TileLayer({
+        //   url: "https://tilesdevext.arcgis.com/tiles/LkFyxb9zDq7vAOAm/arcgis/rest/services/VintageHillshadeEqualEarth_Pacific/MapServer",
+        //   opacity: 0.7
+        // })
       ]
     },
     layers: [
@@ -122,29 +131,42 @@ let view: MapView;
     },
     constraints: {
       snapToZoom: false
+    },
+    extent: {
+      "spatialReference": {
+        "wkid": 54037
+      },
+      "xmin": -21112411.21972788,
+      "ymin": -9966613.185376981,
+      "xmax": 19652497.25028626,
+      "ymax": 11153267.034977665
     }
   });
   (window as any).view = view;
 
-  const basemapGeoJSON = new GeoJSONLayer({
-    url: "https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector/geojson/ne_110m_land.geojson",
-    // https://github.com/nvkelso/natural-earth-vector/blob/master/LICENSE.md
-    copyright: "Made with Natural Earth."
-  });
-  basemapGeoJSON.load();
+  // const basemapGeoJSON = new GeoJSONLayer({
+  //   url: "https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector/geojson/ne_110m_land.geojson",
+  //   // https://github.com/nvkelso/natural-earth-vector/blob/master/LICENSE.md
+  //   copyright: "Made with Natural Earth."
+  // });
+  // basemapGeoJSON.load();
 
   const $ = document.querySelector.bind(document);
   view.ui.add(new Zoom({ view, layout: "horizontal" }), "bottom-right");
   view.ui.add(new Home({ view }), "bottom-right");
   view.ui.add(new Header({ title: "Filter & Effect" }));
-  view.ui.add(new BasemapToggle({
-    view,
-    nextBasemap: new Basemap({
-      baseLayers: [
-        basemapGeoJSON
-      ]
-    })
-  }), "top-right")
+  // view.ui.add(new BasemapToggle({
+  //   view,
+  //   nextBasemap: new Basemap({
+  //     baseLayers: [
+  //       new TileLayer({
+  //         url: "https://tilesdevext.arcgis.com/tiles/LkFyxb9zDq7vAOAm/arcgis/rest/services/VintageHillshadeEqualEarth_Pacific/MapServer",
+  //         opacity: 0.7
+  //       })
+  //       // basemapGeoJSON
+  //     ]
+  //   })
+  // }), "top-right")
   view.ui.add(
     new Expand({
       expandIconClass: "esri-icon-chart",
@@ -172,12 +194,12 @@ let view: MapView;
       "spatialReference": {
         "wkid": 54037
       },
-      "xmin": 1345414.6663256646,
-      "ymin": 5482668.016051696,
-      "xmax": 7345581.790848071,
-      "ymax": 8637887.164269127
+      "xmin": 2040605.7663298452,
+      "ymin": 6308917.7043609945,
+      "xmax": 4904201.102165737,
+      "ymax": 7792517.024519098
     }), {
-      duration: 3000
+      duration: 2500
     });
   }}), "bottom-right");
 
@@ -202,7 +224,7 @@ let view: MapView;
   depthSlider.onChange = (field, minValue, maxValue) => {
     const layerView = view.layerViews.getItemAt(0) as FeatureLayerView;
 layerView.effect = new FeatureEffect({
-  outsideEffect: "grayscale(75%) opacity(0.75)",
+  outsideEffect: "grayscale(100%) opacity(0.5)",
 
   filter: new FeatureFilter({
     where: `depth >= ${minValue} AND depth <= ${maxValue}`
@@ -210,8 +232,7 @@ layerView.effect = new FeatureEffect({
 });
     $("#effectCode").innerHTML = `
   layerView.effect = new FeatureEffect({
-    outsideEffect: &quot;grayscale(75%) opacity(0.75)&quot;,
-    insideEffect: &quot;brightness(110%)&quot;,
+    excludedEffect: &quot;grayscale(100%) opacity(0.5)&quot;,
     filter: new FeatureFilter({
       where: \`depth &gt;= ${minValue} AND depth &lt;= ${maxValue}\`
     })
