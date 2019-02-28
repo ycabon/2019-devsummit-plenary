@@ -94,7 +94,8 @@ let view: MapView;
       });
 
       const {
-        total_pop, total_unemployed
+        total_pop,
+        total_unemployed
       } = result.features[0].attributes;
 
       return total_unemployed / total_pop;
