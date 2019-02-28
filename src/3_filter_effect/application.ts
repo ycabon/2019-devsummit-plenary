@@ -214,9 +214,11 @@ let view: MapView;
       where: `mag >= ${minValue} AND mag <= ${maxValue}`
     });
     $("#filterCode").innerHTML = `
-  layerView.filter = new FeatureFilter({
+  const filter = new FeatureFilter({
     where: \`mag &gt;= ${minValue} AND mag &lt;= ${maxValue}\`
   });
+
+  layerView.filter = filter;
   `
     hljs.highlightBlock($("#filterCode"));
   }
@@ -231,12 +233,16 @@ layerView.effect = new FeatureEffect({
   })
 });
     $("#effectCode").innerHTML = `
-  layerView.effect = new FeatureEffect({
-    excludedEffect: &quot;grayscale(100%) opacity(0.5)&quot;,
-    filter: new FeatureFilter({
-      where: \`depth &gt;= ${minValue} AND depth &lt;= ${maxValue}\`
-    })
+  const filter = new FeatureFilter({
+    where: \`depth &gt;= ${minValue} AND depth &lt;= ${maxValue}\`
   });
+
+  const effect = new FeatureEffect({
+    excludedEffect: &quot;grayscale(100%) opacity(0.5)&quot;,
+    filter
+  });
+
+  layerView.effect = effect;
   `
     hljs.highlightBlock($("#effectCode"));
   }

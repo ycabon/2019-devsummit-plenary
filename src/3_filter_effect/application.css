@@ -24,8 +24,8 @@ body {
 }
 
 .application-panel {
-  padding: 12px;
-  min-width: 400px;
+  padding: 10px;
+  min-width: 550px;
 
   display: flex;
   flex-direction: column;

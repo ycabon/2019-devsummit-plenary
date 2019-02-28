@@ -351,7 +351,7 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/core/wa
                         layerView.filter = new FeatureFilter({
                             where: "mag >= " + minValue + " AND mag <= " + maxValue
                         });
-                        $("#filterCode").innerHTML = "\n  layerView.filter = new FeatureFilter({\n    where: `mag &gt;= " + minValue + " AND mag &lt;= " + maxValue + "`\n  });\n  ";
+                        $("#filterCode").innerHTML = "\n  const filter = new FeatureFilter({\n    where: `mag &gt;= " + minValue + " AND mag &lt;= " + maxValue + "`\n  });\n\n  layerView.filter = filter;\n  ";
                         hljs.highlightBlock($("#filterCode"));
                     };
                     depthSlider.onChange = function (field, minValue, maxValue) {
@@ -362,7 +362,7 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/core/wa
                                 where: "depth >= " + minValue + " AND depth <= " + maxValue
                             })
                         });
-                        $("#effectCode").innerHTML = "\n  layerView.effect = new FeatureEffect({\n    excludedEffect: &quot;grayscale(100%) opacity(0.5)&quot;,\n    filter: new FeatureFilter({\n      where: `depth &gt;= " + minValue + " AND depth &lt;= " + maxValue + "`\n    })\n  });\n  ";
+                        $("#effectCode").innerHTML = "\n  const filter = new FeatureFilter({\n    where: `depth &gt;= " + minValue + " AND depth &lt;= " + maxValue + "`\n  });\n\n  const effect = new FeatureEffect({\n    excludedEffect: &quot;grayscale(100%) opacity(0.5)&quot;,\n    filter\n  });\n\n  layerView.effect = effect;\n  ";
                         hljs.highlightBlock($("#effectCode"));
                     };
                     return [2 /*return*/];
