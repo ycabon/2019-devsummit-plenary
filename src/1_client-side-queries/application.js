@@ -104,14 +104,14 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                                     case 0: return [4 /*yield*/, layerView.queryFeatures({
                                             geometry: geometry,
                                             outStatistics: [
+                                                // Sum of the population
                                                 new StatisticDefinition({
-                                                    // All Population in Civilian Labor Force
                                                     onStatisticField: "B23025_003E",
                                                     outStatisticFieldName: "total_pop",
                                                     statisticType: "sum"
                                                 }),
+                                                // Sum of the unemployed population
                                                 new StatisticDefinition({
-                                                    // Unemployed Population in Civilian Labor Force
                                                     onStatisticField: "B23025_005E",
                                                     outStatisticFieldName: "total_unemployed",
                                                     statisticType: "sum"

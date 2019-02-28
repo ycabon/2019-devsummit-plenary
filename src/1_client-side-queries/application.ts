@@ -73,17 +73,19 @@ let view: MapView;
       maximumFractionDigits: 2
     }),
     queryStatistics: async (layerView, geometry) => {
+
+
       const result = await layerView.queryFeatures({
-        geometry,
+        geometry, // view extent
         outStatistics: [
+          // Sum of the population
           new StatisticDefinition({
-            // All Population in Civilian Labor Force
             onStatisticField: "B23025_003E",
             outStatisticFieldName: "total_pop",
             statisticType: "sum"
           }),
+          // Sum of the unemployed population
           new StatisticDefinition({
-            // Unemployed Population in Civilian Labor Force
             onStatisticField: "B23025_005E",
             outStatisticFieldName: "total_unemployed",
             statisticType: "sum"
