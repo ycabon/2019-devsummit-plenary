@@ -60,8 +60,8 @@ let view: MapView;
   await view.whenLayerView(layer);
 
   view.ui.add(new Header({ title: "Client-side queries" }));
-  view.ui.add(new Zoom({ view, layout: "horizontal" }), "bottom-right");
-  view.ui.add(new Home({ view }), "bottom-right");
+  view.ui.add(new Zoom({ view, layout: "horizontal" }), "bottom-left");
+  view.ui.add(new Home({ view }), "bottom-left");
 
   new Legend({ view, container: "legend" });
   new Indicator({
@@ -72,7 +72,12 @@ let view: MapView;
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }),
+
+    /**
+     * Query for the sum of population and the sum of people unemployed
+     */
     queryStatistics: async (layerView, geometry) => {
+
       const result = await layerView.queryFeatures({
         geometry,
         outStatistics: [
@@ -95,6 +100,7 @@ let view: MapView;
         total_pop, total_unemployed
       } = result.features[0].attributes;
 
+      // Calculate the percentage
       return total_unemployed / total_pop;
     },
     view,
