@@ -33,7 +33,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/TileLayer", "esri/core/watchUtils", "esri/renderers", "esri/symbols", "../widgets/Header", "esri/layers/GeoJSONLayer", "esri/renderers/visualVariables/SizeVariable", "esri/views/layers/support/FeatureFilter", "esri/views/layers/support/FeatureEffect", "../widgets/IconButton", "esri/tasks/support/StatisticDefinition", "esri/widgets/BasemapToggle", "esri/Basemap", "esri/widgets/Expand", "esri/widgets/Zoom", "esri/widgets/Home", "esri/geometry"], function (require, exports, MapView, WebMap, TileLayer, watchUtils_1, renderers_1, symbols_1, Header_1, GeoJSONLayer, SizeVariable, FeatureFilter, FeatureEffect, IconButton_1, StatisticDefinition, BasemapToggle, Basemap, Expand, Zoom, Home, geometry_1) {
+define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/core/watchUtils", "esri/renderers", "esri/symbols", "../widgets/Header", "esri/layers/GeoJSONLayer", "esri/renderers/visualVariables/SizeVariable", "esri/views/layers/support/FeatureFilter", "esri/views/layers/support/FeatureEffect", "../widgets/IconButton", "esri/tasks/support/StatisticDefinition", "esri/widgets/Expand", "esri/widgets/Zoom", "esri/widgets/Home", "esri/geometry"], function (require, exports, MapView, WebMap, watchUtils_1, renderers_1, symbols_1, Header_1, GeoJSONLayer, SizeVariable, FeatureFilter, FeatureEffect, IconButton_1, StatisticDefinition, Expand, Zoom, Home, geometry_1) {
     "use strict";
     var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -182,7 +182,7 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/
                 });
             });
         }
-        var response, geojson, url, layer, basemapGeoJSON, $, _a, magnitudeSlider, depthSlider;
+        var response, geojson, url, layer, $, _a, magnitudeSlider, depthSlider;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0: return [4 /*yield*/, fetch("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson")];
@@ -253,10 +253,19 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/
                     map = new WebMap({
                         basemap: {
                             baseLayers: [
-                                new TileLayer({
-                                    url: "https://tilesdevext.arcgis.com/tiles/LkFyxb9zDq7vAOAm/arcgis/rest/services/VintageHillshadeEqualEarth_Pacific/MapServer",
-                                    opacity: 0.7
+                                new GeoJSONLayer({
+                                    url: "https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector/geojson/ne_110m_land.geojson",
+                                    // https://github.com/nvkelso/natural-earth-vector/blob/master/LICENSE.md
+                                    copyright: "Made with Natural Earth.",
+                                    opacity: 0.7,
+                                    spatialReference: {
+                                        wkid: 54037
+                                    }
                                 })
+                                // new TileLayer({
+                                //   url: "https://tilesdevext.arcgis.com/tiles/LkFyxb9zDq7vAOAm/arcgis/rest/services/VintageHillshadeEqualEarth_Pacific/MapServer",
+                                //   opacity: 0.7
+                                // })
                             ]
                         },
                         layers: [
@@ -274,27 +283,34 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/
                         },
                         constraints: {
                             snapToZoom: false
+                        },
+                        extent: {
+                            "spatialReference": {
+                                "wkid": 54037
+                            },
+                            "xmin": -21112411.21972788,
+                            "ymin": -9966613.185376981,
+                            "xmax": 19652497.25028626,
+                            "ymax": 11153267.034977665
                         }
                     });
                     window.view = view;
-                    basemapGeoJSON = new GeoJSONLayer({
-                        url: "https://cdn.jsdelivr.net/gh/nvkelso/natural-earth-vector/geojson/ne_110m_land.geojson",
-                        // https://github.com/nvkelso/natural-earth-vector/blob/master/LICENSE.md
-                        copyright: "Made with Natural Earth."
-                    });
-                    basemapGeoJSON.load();
                     $ = document.querySelector.bind(document);
                     view.ui.add(new Zoom({ view: view, layout: "horizontal" }), "bottom-right");
                     view.ui.add(new Home({ view: view }), "bottom-right");
                     view.ui.add(new Header_1.default({ title: "Filter & Effect" }));
-                    view.ui.add(new BasemapToggle({
-                        view: view,
-                        nextBasemap: new Basemap({
-                            baseLayers: [
-                                basemapGeoJSON
-                            ]
-                        })
-                    }), "top-right");
+                    // view.ui.add(new BasemapToggle({
+                    //   view,
+                    //   nextBasemap: new Basemap({
+                    //     baseLayers: [
+                    //       new TileLayer({
+                    //         url: "https://tilesdevext.arcgis.com/tiles/LkFyxb9zDq7vAOAm/arcgis/rest/services/VintageHillshadeEqualEarth_Pacific/MapServer",
+                    //         opacity: 0.7
+                    //       })
+                    //       // basemapGeoJSON
+                    //     ]
+                    //   })
+                    // }), "top-right")
                     view.ui.add(new Expand({
                         expandIconClass: "esri-icon-chart",
                         expandTooltip: "Filter by magnitude",
@@ -316,12 +332,12 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/
                                 "spatialReference": {
                                     "wkid": 54037
                                 },
-                                "xmin": 1345414.6663256646,
-                                "ymin": 5482668.016051696,
-                                "xmax": 7345581.790848071,
-                                "ymax": 8637887.164269127
+                                "xmin": 2040605.7663298452,
+                                "ymin": 6308917.7043609945,
+                                "xmax": 4904201.102165737,
+                                "ymax": 7792517.024519098
                             }), {
-                                duration: 3000
+                                duration: 2500
                             });
                         } }), "bottom-right");
                     return [4 /*yield*/, Promise.all([
@@ -341,12 +357,12 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/layers/
                     depthSlider.onChange = function (field, minValue, maxValue) {
                         var layerView = view.layerViews.getItemAt(0);
                         layerView.effect = new FeatureEffect({
-                            outsideEffect: "grayscale(75%) opacity(0.75)",
+                            outsideEffect: "grayscale(100%) opacity(0.5)",
                             filter: new FeatureFilter({
                                 where: "depth >= " + minValue + " AND depth <= " + maxValue
                             })
                         });
-                        $("#effectCode").innerHTML = "\n  layerView.effect = new FeatureEffect({\n    outsideEffect: &quot;grayscale(75%) opacity(0.75)&quot;,\n    insideEffect: &quot;brightness(110%)&quot;,\n    filter: new FeatureFilter({\n      where: `depth &gt;= " + minValue + " AND depth &lt;= " + maxValue + "`\n    })\n  });\n  ";
+                        $("#effectCode").innerHTML = "\n  layerView.effect = new FeatureEffect({\n    excludedEffect: &quot;grayscale(100%) opacity(0.5)&quot;,\n    filter: new FeatureFilter({\n      where: `depth &gt;= " + minValue + " AND depth &lt;= " + maxValue + "`\n    })\n  });\n  ";
                         hljs.highlightBlock($("#effectCode"));
                     };
                     return [2 /*return*/];
