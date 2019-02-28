@@ -86,8 +86,8 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                 case 3:
                     _a.sent();
                     view.ui.add(new Header_1.default({ title: "Client-side queries" }));
-                    view.ui.add(new Zoom({ view: view, layout: "horizontal" }), "bottom-right");
-                    view.ui.add(new Home({ view: view }), "bottom-right");
+                    view.ui.add(new Zoom({ view: view, layout: "horizontal" }), "bottom-left");
+                    view.ui.add(new Home({ view: view }), "bottom-left");
                     new Legend({ view: view, container: "legend" });
                     new Indicator_1.default({
                         container: "indicator",
@@ -97,6 +97,9 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2
                         }),
+                        /**
+                         * Query for the sum of population and the sum of people unemployed
+                         */
                         queryStatistics: function (layerView, geometry) { return __awaiter(_this, void 0, void 0, function () {
                             var result, _a, total_pop, total_unemployed;
                             return __generator(this, function (_b) {
@@ -121,6 +124,7 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                                     case 1:
                                         result = _b.sent();
                                         _a = result.features[0].attributes, total_pop = _a.total_pop, total_unemployed = _a.total_unemployed;
+                                        // Calculate the percentage
                                         return [2 /*return*/, total_unemployed / total_pop];
                                 }
                             });
