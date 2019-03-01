@@ -128,10 +128,41 @@ view.ui.add(alaska, "bottom-right");
 view.ui.add(new Header({ title: "GeoJSON" }));
 
 const $ = document.querySelector.bind(document);
+
+const expand1 = new Expand({
+  expandIconClass: "esri-icon-feature-layer",
+  expandTooltip: "Layer",
+  content: $("#layerPanel"),
+  expanded: false,
+  group: "group1",
+  view
+});
+const expand2 = new Expand({
+  expandIconClass: "esri-icon-globe",
+  expandTooltip: "Elevation",
+  content: $("#elevationPanel"),
+  expanded: false,
+  group: "group1",
+  view
+});
+const expand3 = new Expand({
+  expandIconClass: "esri-icon-maps",
+  expandTooltip: "Renderer",
+  content: $("#rendererPanel"),
+  expanded: false,
+  group: "group1",
+  view
+});
+
+view.ui.add(expand1, "top-left");
+view.ui.add(expand2, "top-left");
+view.ui.add(expand3, "top-left");
+
 const opacitySliderDiv = $("#opacitySlider");
 
 $("#addGeoJSONLayerButton").onclick = () => {
   scene.add(layer);
+  expand1.collapse();
 }
 
  $("#applyElevationInfoButton").onclick = () => {
@@ -157,43 +188,8 @@ new Slider({
   }
 });
 
-view.ui.add(
-  new Expand({
-    expandIconClass: "esri-icon-feature-layer",
-    expandTooltip: "Layer",
-    content: $("#layerPanel"),
-    expanded: false,
-    group: "group1",
-    view
-  }),
-  "top-left"
-);
-
-view.ui.add(
-  new Expand({
-    expandIconClass: "esri-icon-globe",
-    expandTooltip: "Elevation",
-    content: $("#elevationPanel"),
-    expanded: false,
-    group: "group1",
-    view
-  }),
-  "top-left"
-);
-
-view.ui.add(
-  new Expand({
-    expandIconClass: "esri-icon-maps",
-    expandTooltip: "Renderer",
-    content: $("#rendererPanel"),
-    expanded: false,
-    group: "group1",
-    view
-  }),
-  "top-left"
-);
-
 $("#applyRendererButton").onclick = () => {
+  expand3.collapse();
   layer.renderer = new SimpleRenderer({
     symbol: new PointSymbol3D({
       symbolLayers: [

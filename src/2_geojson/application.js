@@ -106,9 +106,37 @@ define(["require", "exports", "esri/WebScene", "esri/views/SceneView", "esri/lay
     view.ui.add(alaska, "bottom-right");
     view.ui.add(new Header_1.default({ title: "GeoJSON" }));
     var $ = document.querySelector.bind(document);
+    var expand1 = new Expand({
+        expandIconClass: "esri-icon-feature-layer",
+        expandTooltip: "Layer",
+        content: $("#layerPanel"),
+        expanded: false,
+        group: "group1",
+        view: view
+    });
+    var expand2 = new Expand({
+        expandIconClass: "esri-icon-globe",
+        expandTooltip: "Elevation",
+        content: $("#elevationPanel"),
+        expanded: false,
+        group: "group1",
+        view: view
+    });
+    var expand3 = new Expand({
+        expandIconClass: "esri-icon-maps",
+        expandTooltip: "Renderer",
+        content: $("#rendererPanel"),
+        expanded: false,
+        group: "group1",
+        view: view
+    });
+    view.ui.add(expand1, "top-left");
+    view.ui.add(expand2, "top-left");
+    view.ui.add(expand3, "top-left");
     var opacitySliderDiv = $("#opacitySlider");
     $("#addGeoJSONLayerButton").onclick = function () {
         scene.add(layer);
+        expand1.collapse();
     };
     $("#applyElevationInfoButton").onclick = function () {
         layer.elevationInfo = {
@@ -131,31 +159,8 @@ define(["require", "exports", "esri/WebScene", "esri/views/SceneView", "esri/lay
             scene.ground.opacity = value;
         }
     });
-    view.ui.add(new Expand({
-        expandIconClass: "esri-icon-feature-layer",
-        expandTooltip: "Layer",
-        content: $("#layerPanel"),
-        expanded: false,
-        group: "group1",
-        view: view
-    }), "top-left");
-    view.ui.add(new Expand({
-        expandIconClass: "esri-icon-globe",
-        expandTooltip: "Elevation",
-        content: $("#elevationPanel"),
-        expanded: false,
-        group: "group1",
-        view: view
-    }), "top-left");
-    view.ui.add(new Expand({
-        expandIconClass: "esri-icon-maps",
-        expandTooltip: "Renderer",
-        content: $("#rendererPanel"),
-        expanded: false,
-        group: "group1",
-        view: view
-    }), "top-left");
     $("#applyRendererButton").onclick = function () {
+        expand3.collapse();
         layer.renderer = new renderers_1.SimpleRenderer({
             symbol: new symbols_1.PointSymbol3D({
                 symbolLayers: [

@@ -233,13 +233,11 @@ layerView.effect = new FeatureEffect({
   })
 });
     $("#effectCode").innerHTML = `
-  const filter = new FeatureFilter({
-    where: \`depth &gt;= ${minValue} AND depth &lt;= ${maxValue}\`
-  });
-
   const effect = new FeatureEffect({
     excludedEffect: &quot;grayscale(100%) opacity(0.5)&quot;,
-    filter
+    filter: new FeatureFilter({
+      where: \`depth &gt;= ${minValue} AND depth &lt;= ${maxValue}\`
+    })
   });
 
   layerView.effect = effect;
