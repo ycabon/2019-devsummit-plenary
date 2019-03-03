@@ -5,13 +5,10 @@ import GroupLayer = require("esri/layers/GroupLayer");
 import FeatureLayer = require("esri/layers/FeatureLayer");
 import WebMap = require("esri/WebMap");
 import StatisticDefinition = require("esri/tasks/support/StatisticDefinition");
-import FeatureLayerView = require("esri/views/layers/FeatureLayerView");
-import { Polygon } from "esri/geometry";
-import { SimpleRenderer } from "esri/renderers";
-import { SimpleFillSymbol } from "esri/symbols";
 import Header from "../widgets/Header";
 
-import Expand = require("esri/widgets/Expand");
+import Query = require("esri/tasks/support/Query");
+
 import Zoom = require("esri/widgets/Zoom");
 import Legend = require("esri/widgets/Legend");
 import Home = require("esri/widgets/Home");
@@ -86,31 +83,34 @@ let view: MapView;
      */
     queryStatistics: async (layerView, geometry) => {
 
-      const result = await layerView.queryFeatures({
-        geometry, // view extent
+      const query = new Query({
+        // view extent
+        geometry,
         outStatistics: [
-          // Sum of the population
+          // Sum of the active population
           new StatisticDefinition({
             onStatisticField: "B23025_003E",
-            outStatisticFieldName: "total_pop",
+            outStatisticFieldName: "sumActivePop",
             statisticType: "sum"
           }),
           // Sum of the unemployed population
           new StatisticDefinition({
             onStatisticField: "B23025_005E",
-            outStatisticFieldName: "total_unemployed",
+            outStatisticFieldName: "sumUnemployedPop",
             statisticType: "sum"
           })
         ]
       });
 
+      const featureSet = await layerView.queryFeatures(query);
+
       const {
-        total_pop,
-        total_unemployed
-      } = result.features[0].attributes;
+        sumActivePop,
+        sumUnemployedPop
+      } = featureSet.features[0].attributes;
 
       // Calculate the percentage
-      return total_unemployed / total_pop;
+      return sumUnemployedPop / sumActivePop;
     },
     view,
     layer
