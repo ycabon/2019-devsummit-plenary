@@ -33,13 +33,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "esri/layers/Layer", "esri/WebMap", "esri/tasks/support/StatisticDefinition", "../widgets/Header", "esri/widgets/Zoom", "esri/widgets/Legend", "esri/widgets/Home", "../widgets/Indicator"], function (require, exports, PortalItem, MapView, Layer, WebMap, StatisticDefinition, Header_1, Zoom, Legend, Home, Indicator_1) {
+define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "esri/layers/Layer", "esri/WebMap", "esri/tasks/support/StatisticDefinition", "../widgets/Header", "esri/widgets/Zoom", "esri/widgets/Legend", "esri/widgets/Home", "../widgets/Indicator", "../widgets/IconButton"], function (require, exports, PortalItem, MapView, Layer, WebMap, StatisticDefinition, Header_1, Zoom, Legend, Home, Indicator_1, IconButton_1) {
     "use strict";
     var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
     var view;
     (function () { return __awaiter(_this, void 0, void 0, function () {
-        var map, layer;
+        var map, layer, nyc;
         var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -88,6 +88,12 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                     view.ui.add(new Header_1.default({ title: "Client-side queries" }));
                     view.ui.add(new Zoom({ view: view, layout: "horizontal" }), "bottom-left");
                     view.ui.add(new Home({ view: view }), "bottom-left");
+                    nyc = new IconButton_1.default({ title: "NYC", action: function () {
+                            view.goTo({ center: [-73.9812, 40.737405], zoom: 12 }, {
+                                duration: 2000
+                            });
+                        } });
+                    view.ui.add(nyc, "bottom-left");
                     new Legend({ view: view, container: "legend" });
                     new Indicator_1.default({
                         container: "indicator",

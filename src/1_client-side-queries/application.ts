@@ -16,6 +16,7 @@ import Zoom = require("esri/widgets/Zoom");
 import Legend = require("esri/widgets/Legend");
 import Home = require("esri/widgets/Home");
 import Indicator from "../widgets/Indicator";
+import IconButton from "../widgets/IconButton";
 
 let view: MapView;
 
@@ -45,6 +46,7 @@ let view: MapView;
     },
     popup: null
   });
+
   (window as any).view = view;
 
   const layer = await Layer.fromPortalItem({
@@ -62,6 +64,12 @@ let view: MapView;
   view.ui.add(new Header({ title: "Client-side queries" }));
   view.ui.add(new Zoom({ view, layout: "horizontal" }), "bottom-left");
   view.ui.add(new Home({ view }), "bottom-left");
+  const nyc = new IconButton({ title: "NYC", action: () => {
+    view.goTo({ center: [-73.9812, 40.737405], zoom: 12 }, {
+      duration: 2000
+    });
+  }});
+  view.ui.add(nyc, "bottom-left");
 
   new Legend({ view, container: "legend" });
   new Indicator({
