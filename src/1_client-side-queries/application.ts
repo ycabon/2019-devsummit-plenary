@@ -78,9 +78,6 @@ let view: MapView;
       maximumFractionDigits: 2
     }),
 
-    /**
-     * Query for the sum of population and the sum of people unemployed
-     */
     queryStatistics: async (layerView, geometry) => {
 
       const query = new Query({

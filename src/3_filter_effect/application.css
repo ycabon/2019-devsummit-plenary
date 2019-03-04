@@ -14,7 +14,8 @@ body {
 }
 
 .hljs {
-  font-size: 150%;
+  font-size: 130%;
+  line-height: 120%;
 }
 
 .mapping {
@@ -182,4 +183,13 @@ fieldset p {
   height: 127px;
   padding-left: 0;
   padding-right: 0;
+}
+
+.esri-view-width-less-than-large .hljs {
+  font-size: 100%;
+  line-height: 100%;
+}
+
+.esri-view-width-less-than-large .application-panel .run-button {
+  position: relative;
 }

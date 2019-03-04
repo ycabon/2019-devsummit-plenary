@@ -7,7 +7,8 @@ body {
 }
 
 .hljs {
-  font-size: 150%;
+  font-size: 130%;
+  line-height: 120%;
 }
 
 .application {
@@ -30,10 +31,6 @@ body {
   display: flex;
   flex-direction: column;
 }
-/*
-.application-panel .hljs {
-  background: black;
-} */
 
 .esri-widget .application-panel {
   background-color: #242424DD;
@@ -64,4 +61,13 @@ body {
   width: auto;
   padding-left: 12px;
   padding-right: 12px;
+}
+
+.esri-view-width-less-than-large .hljs {
+  font-size: 100%;
+  line-height: 100%;
+}
+
+.esri-view-width-less-than-large .application-panel .run-button {
+  position: relative;
 }
