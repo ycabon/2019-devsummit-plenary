@@ -193,3 +193,11 @@ fieldset p {
 .esri-view-width-less-than-large .application-panel .run-button {
   position: relative;
 }
+
+.esri-view-width-less-than-small .esri-expand--auto .esri-widget.application-panel .run-button
+ {
+  width: auto;
+  position: fixed;
+  top: 1.023rem;
+  right: 1.023rem;
+}
