@@ -33,7 +33,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "esri/layers/Layer", "esri/WebMap", "esri/tasks/support/StatisticDefinition", "../widgets/Header", "esri/tasks/support/Query", "esri/widgets/Zoom", "esri/widgets/Legend", "esri/widgets/Home", "../widgets/Indicator", "../widgets/IconButton"], function (require, exports, PortalItem, MapView, Layer, WebMap, StatisticDefinition, Header_1, Query, Zoom, Legend, Home, Indicator_1, IconButton_1) {
+define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "esri/layers/Layer", "esri/WebMap", "esri/tasks/support/StatisticDefinition", "../widgets/Banner", "esri/tasks/support/Query", "esri/widgets/Zoom", "esri/widgets/Legend", "esri/widgets/Home", "../widgets/Indicator", "../widgets/IconButton"], function (require, exports, PortalItem, MapView, Layer, WebMap, StatisticDefinition, Banner_1, Query, Zoom, Legend, Home, Indicator_1, IconButton_1) {
     "use strict";
     var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -85,7 +85,7 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                     return [4 /*yield*/, view.whenLayerView(layer)];
                 case 3:
                     _a.sent();
-                    view.ui.add(new Header_1.default({ title: "Client-side queries" }));
+                    view.ui.add(new Banner_1.default({ title: "Client-side queries" }));
                     view.ui.add(new Zoom({ view: view, layout: "horizontal" }), "bottom-left");
                     view.ui.add(new Home({ view: view }), "bottom-left");
                     nyc = new IconButton_1.default({ title: "NYC", action: function () {

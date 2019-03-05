@@ -4,7 +4,7 @@ import TileLayer = require("esri/layers/TileLayer");
 import { whenFalse } from "esri/core/watchUtils";
 import { SimpleRenderer } from "esri/renderers";
 import { SimpleMarkerSymbol } from "esri/symbols";
-import Header from "../widgets/Header";
+import Header from "../widgets/Banner";
 import GeoJSONLayer = require("esri/layers/GeoJSONLayer");
 import SizeVariable = require("esri/renderers/visualVariables/SizeVariable");
 import FeatureFilter = require("esri/views/layers/support/FeatureFilter");

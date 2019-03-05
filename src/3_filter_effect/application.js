@@ -33,7 +33,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/core/watchUtils", "esri/renderers", "esri/symbols", "../widgets/Header", "esri/layers/GeoJSONLayer", "esri/renderers/visualVariables/SizeVariable", "esri/views/layers/support/FeatureFilter", "esri/views/layers/support/FeatureEffect", "../widgets/IconButton", "esri/tasks/support/StatisticDefinition", "esri/widgets/Expand", "esri/widgets/Zoom", "esri/widgets/Home", "esri/geometry"], function (require, exports, MapView, WebMap, watchUtils_1, renderers_1, symbols_1, Header_1, GeoJSONLayer, SizeVariable, FeatureFilter, FeatureEffect, IconButton_1, StatisticDefinition, Expand, Zoom, Home, geometry_1) {
+define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/core/watchUtils", "esri/renderers", "esri/symbols", "../widgets/Banner", "esri/layers/GeoJSONLayer", "esri/renderers/visualVariables/SizeVariable", "esri/views/layers/support/FeatureFilter", "esri/views/layers/support/FeatureEffect", "../widgets/IconButton", "esri/tasks/support/StatisticDefinition", "esri/widgets/Expand", "esri/widgets/Zoom", "esri/widgets/Home", "esri/geometry"], function (require, exports, MapView, WebMap, watchUtils_1, renderers_1, symbols_1, Banner_1, GeoJSONLayer, SizeVariable, FeatureFilter, FeatureEffect, IconButton_1, StatisticDefinition, Expand, Zoom, Home, geometry_1) {
     "use strict";
     var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -298,7 +298,7 @@ define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/core/wa
                     $ = document.querySelector.bind(document);
                     view.ui.add(new Zoom({ view: view, layout: "horizontal" }), "bottom-right");
                     view.ui.add(new Home({ view: view }), "bottom-right");
-                    view.ui.add(new Header_1.default({ title: "Filter & Effect" }));
+                    view.ui.add(new Banner_1.default({ title: "Filter & Effect" }));
                     // view.ui.add(new BasemapToggle({
                     //   view,
                     //   nextBasemap: new Basemap({

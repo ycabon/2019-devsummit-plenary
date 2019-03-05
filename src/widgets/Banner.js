@@ -55,4 +55,4 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
     }(decorators_1.declared(Widget)));
     exports.default = Header;
 });
-//# sourceMappingURL=Header.js.map
+//# sourceMappingURL=Banner.js.map

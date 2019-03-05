@@ -9,7 +9,7 @@ import ColorVariable = require("esri/renderers/visualVariables/ColorVariable");
 import Expand = require("esri/widgets/Expand");
 import Zoom = require("esri/widgets/Zoom");
 import Home = require("esri/widgets/Home");
-import Header from "../widgets/Header";
+import Header from "../widgets/Banner";
 import Slider from "../widgets/Slider";
 import IconButton from "../widgets/IconButton";
 import Camera = require("esri/Camera");

@@ -5,7 +5,7 @@ import GroupLayer = require("esri/layers/GroupLayer");
 import FeatureLayer = require("esri/layers/FeatureLayer");
 import WebMap = require("esri/WebMap");
 import StatisticDefinition = require("esri/tasks/support/StatisticDefinition");
-import Header from "../widgets/Header";
+import Header from "../widgets/Banner";
 
 import Query = require("esri/tasks/support/Query");
 

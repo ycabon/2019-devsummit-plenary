@@ -1,4 +1,4 @@
-define(["require", "exports", "esri/WebScene", "esri/views/SceneView", "esri/layers/GeoJSONLayer", "esri/renderers", "esri/symbols", "esri/renderers/visualVariables/SizeVariable", "esri/renderers/visualVariables/ColorVariable", "esri/widgets/Expand", "esri/widgets/Zoom", "esri/widgets/Home", "../widgets/Header", "../widgets/Slider", "../widgets/IconButton", "esri/Camera"], function (require, exports, WebScene, SceneView, GeoJSONLayer, renderers_1, symbols_1, SizeVariable, ColorVariable, Expand, Zoom, Home, Header_1, Slider_1, IconButton_1, Camera) {
+define(["require", "exports", "esri/WebScene", "esri/views/SceneView", "esri/layers/GeoJSONLayer", "esri/renderers", "esri/symbols", "esri/renderers/visualVariables/SizeVariable", "esri/renderers/visualVariables/ColorVariable", "esri/widgets/Expand", "esri/widgets/Zoom", "esri/widgets/Home", "../widgets/Banner", "../widgets/Slider", "../widgets/IconButton", "esri/Camera"], function (require, exports, WebScene, SceneView, GeoJSONLayer, renderers_1, symbols_1, SizeVariable, ColorVariable, Expand, Zoom, Home, Banner_1, Slider_1, IconButton_1, Camera) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var layer = new GeoJSONLayer({
@@ -104,7 +104,7 @@ define(["require", "exports", "esri/WebScene", "esri/views/SceneView", "esri/lay
     view.ui.add(home, "bottom-right");
     view.ui.add(quakeBookmark, "bottom-right");
     view.ui.add(alaska, "bottom-right");
-    view.ui.add(new Header_1.default({ title: "GeoJSON" }));
+    view.ui.add(new Banner_1.default({ title: "GeoJSON" }));
     var $ = document.querySelector.bind(document);
     var expand1 = new Expand({
         expandIconClass: "esri-icon-feature-layer",
