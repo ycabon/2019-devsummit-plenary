@@ -17,7 +17,47 @@ This demo showcases the new `GeoJSONLayer` that will be part of the ArcGIS API f
 ### Filter & Effect
 
 This demo showcases the new filter and effect APIs for feature layer views.  
-Filter allows the developer to quickly hide features using a query like object. It's possible to filter by attributes using `where` SQL clause, by geometry, by geometry and distance or by time. Features that don't pass the filter are hidden.  
-With Effect the developer can define an effect on features passing and not passing a filter. Effects are inspired by the CSS ones, i.e.: `grayscale(100%) opacity(0.5)`.
+`FeatureFilter` allows the developer to quickly hide features using a query like object. It's possible to filter by attributes using `where` SQL clause, by geometry, by geometry and distance or by time. Features that don't pass the filter are hidden.  
+
+```ts
+layerView.filter = new FeatureFilter({
+  where: `some_attr < 100`,
+  geometry: new Point({
+    longitude: -100,
+    latitude: 40
+  }),
+  distance: 100,
+  unit: "kilometers",
+  spatialRelationship: "contains"
+});
+```
+
+With `FeatureEffect` the developer can define an effect on features passing and not passing a filter. Effects are inspired by the CSS ones, i.e.: `grayscale(100%) opacity(0.5)`.
+
+```ts
+layerView.effect = new FeatureEffect({
+  // Examples:
+  // brightness(0.4);
+  // contrast(200%);
+  // grayscale(50%);
+  // hue-rotate(90deg);
+  // invert(75%);
+  // opacity(25%);
+  // saturate(30%);
+  // sepia(60%);
+  excludedEffect: "grayscale(100%) opacity(0.5)",
+
+  filter: new FeatureFilter({
+    where: `some_attr < 100`,
+    geometry: new Point({
+      longitude: -100,
+      latitude: 40
+    }),
+    distance: 100,
+    unit: "kilometers",
+    spatialRelationship: "contains"
+  })
+});
+```
 
 [![Filter And Effect](https://ycabon.github.io/2019-devsummit-plenary/3_filter_effect.png)](https://ycabon.github.io/2019-devsummit-plenary/3_filter_effect.html)
