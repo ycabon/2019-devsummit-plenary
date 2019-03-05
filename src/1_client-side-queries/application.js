@@ -33,7 +33,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "esri/layers/Layer", "esri/WebMap", "esri/tasks/support/StatisticDefinition", "../widgets/Header", "esri/widgets/Zoom", "esri/widgets/Legend", "esri/widgets/Home", "../widgets/Indicator", "../widgets/IconButton"], function (require, exports, PortalItem, MapView, Layer, WebMap, StatisticDefinition, Header_1, Zoom, Legend, Home, Indicator_1, IconButton_1) {
+define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "esri/layers/Layer", "esri/WebMap", "esri/tasks/support/StatisticDefinition", "../widgets/Header", "esri/tasks/support/Query", "esri/widgets/Zoom", "esri/widgets/Legend", "esri/widgets/Home", "../widgets/Indicator", "../widgets/IconButton"], function (require, exports, PortalItem, MapView, Layer, WebMap, StatisticDefinition, Header_1, Query, Zoom, Legend, Home, Indicator_1, IconButton_1) {
     "use strict";
     var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -103,35 +103,35 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2
                         }),
-                        /**
-                         * Query for the sum of population and the sum of people unemployed
-                         */
                         queryStatistics: function (layerView, geometry) { return __awaiter(_this, void 0, void 0, function () {
-                            var result, _a, total_pop, total_unemployed;
+                            var query, featureSet, _a, sumActivePop, sumUnemployedPop;
                             return __generator(this, function (_b) {
                                 switch (_b.label) {
-                                    case 0: return [4 /*yield*/, layerView.queryFeatures({
+                                    case 0:
+                                        query = new Query({
+                                            // view extent
                                             geometry: geometry,
                                             outStatistics: [
-                                                // Sum of the population
+                                                // Sum of the active population
                                                 new StatisticDefinition({
                                                     onStatisticField: "B23025_003E",
-                                                    outStatisticFieldName: "total_pop",
+                                                    outStatisticFieldName: "sumActivePop",
                                                     statisticType: "sum"
                                                 }),
                                                 // Sum of the unemployed population
                                                 new StatisticDefinition({
                                                     onStatisticField: "B23025_005E",
-                                                    outStatisticFieldName: "total_unemployed",
+                                                    outStatisticFieldName: "sumUnemployedPop",
                                                     statisticType: "sum"
                                                 })
                                             ]
-                                        })];
+                                        });
+                                        return [4 /*yield*/, layerView.queryFeatures(query)];
                                     case 1:
-                                        result = _b.sent();
-                                        _a = result.features[0].attributes, total_pop = _a.total_pop, total_unemployed = _a.total_unemployed;
+                                        featureSet = _b.sent();
+                                        _a = featureSet.features[0].attributes, sumActivePop = _a.sumActivePop, sumUnemployedPop = _a.sumUnemployedPop;
                                         // Calculate the percentage
-                                        return [2 /*return*/, total_unemployed / total_pop];
+                                        return [2 /*return*/, sumUnemployedPop / sumActivePop];
                                 }
                             });
                         }); },
