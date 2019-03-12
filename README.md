@@ -2,6 +2,8 @@
 
 The following demos were presented at the Esri DevSummit 2019 to demonstrate new client-side capabilities of the [ArcGIS API for JavaScript 4.11](https://js.arcgis.com) (Mars 2019).
 
+[![Client-Side Capabilities in Web Apps](https://img.youtube.com/vi/9po7pEcgoJs/maxresdefault.jpg)](https://www.youtube.com/watch?v=9po7pEcgoJs)
+
 ### Client-side queries
 
 [View live app](https://ycabon.github.com/2019-devsummit-plenary/1_client-side-queries.html)
