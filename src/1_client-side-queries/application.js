@@ -65,7 +65,11 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                                 top: 80
                             }
                         },
-                        popup: null
+                        popup: {
+                            dockOptions: {
+                                position: "top-left"
+                            }
+                        }
                     });
                     window.view = view;
                     return [4 /*yield*/, Layer.fromPortalItem({

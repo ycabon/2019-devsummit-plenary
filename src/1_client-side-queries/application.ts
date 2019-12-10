@@ -41,7 +41,11 @@ let view: MapView;
         top: 80
       }
     },
-    popup: null
+    popup: {
+      dockOptions: {
+        position: "top-left"
+      }
+    }
   });
 
   (window as any).view = view;
