@@ -32,9 +32,6 @@ let view: MapView;
     map,
     center: [-85, 40],
     zoom: 3,
-    constraints: {
-      snapToZoom: false,
-    },
     ui: {
       components: ["attribution"],
       padding: {
