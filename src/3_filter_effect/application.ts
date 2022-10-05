@@ -7,11 +7,11 @@ import { SimpleMarkerSymbol } from "esri/symbols";
 import Header from "../widgets/Banner";
 import GeoJSONLayer = require("esri/layers/GeoJSONLayer");
 import SizeVariable = require("esri/renderers/visualVariables/SizeVariable");
-import FeatureFilter = require("esri/views/layers/support/FeatureFilter");
-import FeatureEffect = require("esri/views/layers/support/FeatureEffect");
+import FeatureFilter = require("esri/layers/support/FeatureFilter");
+import FeatureEffect = require("esri/layers/support/FeatureEffect");
 import FeatureLayerView = require("esri/views/layers/FeatureLayerView");
 import IconButton from "../widgets/IconButton";
-import StatisticDefinition = require("esri/tasks/support/StatisticDefinition");
+import StatisticDefinition = require("esri/rest/support/StatisticDefinition");
 import BasemapToggle = require("esri/widgets/BasemapToggle");
 import Basemap = require("esri/Basemap");
 
@@ -225,8 +225,8 @@ let view: MapView;
 
   depthSlider.onChange = (field, minValue, maxValue) => {
     const layerView = view.layerViews.getItemAt(0) as FeatureLayerView;
-layerView.effect = new FeatureEffect({
-  outsideEffect: "grayscale(100%) opacity(0.5)",
+layerView.featureEffect = new FeatureEffect({
+  excludedEffect: "grayscale(100%) opacity(0.5)",
 
   filter: new FeatureFilter({
     where: `depth >= ${minValue} AND depth <= ${maxValue}`
@@ -240,7 +240,7 @@ layerView.effect = new FeatureEffect({
     })
   });
 
-  layerView.effect = effect;
+  layer.featureEffect = effect;
   `
     hljs.highlightBlock($("#effectCode"));
   }

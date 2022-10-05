@@ -155,7 +155,7 @@ define(["require", "exports", "esri/WebScene", "esri/views/SceneView", "esri/lay
         value: 1,
         // title: "Ground opacity",
         action: function (value) {
-            $("#groundOpacityCode").innerText = "scene.ground.opacity = " + value;
+            $("#groundOpacityCode").innerText = "scene.ground.opacity = ".concat(value);
             scene.ground.opacity = value;
         }
     });

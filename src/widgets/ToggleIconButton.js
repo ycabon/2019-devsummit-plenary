@@ -2,10 +2,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -72,12 +74,12 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widg
             var iconClasses = (_b = {},
                 _b[this.iconClass] = !!this.iconClass,
                 _b);
-            var titleRendered = this.title ? widget_1.tsx("span", null, this.title) : null;
-            return (widget_1.tsx("div", { bind: this, class: CSS.button, classes: rootClasses, onclick: this._triggerAction, onkeydown: this._triggerAction, role: "button", tabIndex: tabIndex, title: this.title },
-                widget_1.tsx("div", { class: CSS.content },
-                    widget_1.tsx("span", { "aria-hidden": "true", role: "presentation", class: CSS.icon, classes: iconClasses }),
+            var titleRendered = this.title ? (0, widget_1.tsx)("span", null, this.title) : null;
+            return ((0, widget_1.tsx)("div", { bind: this, class: CSS.button, classes: rootClasses, onclick: this._triggerAction, onkeydown: this._triggerAction, role: "button", tabIndex: tabIndex, title: this.title },
+                (0, widget_1.tsx)("div", { class: CSS.content },
+                    (0, widget_1.tsx)("span", { "aria-hidden": "true", role: "presentation", class: CSS.icon, classes: iconClasses }),
                     titleRendered),
-                widget_1.tsx("div", { class: CSS.indicator })));
+                (0, widget_1.tsx)("div", { class: CSS.indicator })));
         };
         //--------------------------------------------------------------------------
         //
@@ -91,27 +93,27 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widg
             }
         };
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], ToggleIconButton.prototype, "toggled", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], ToggleIconButton.prototype, "toggle", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], ToggleIconButton.prototype, "enabled", void 0);
         __decorate([
-            decorators_1.property({
+            (0, decorators_1.property)({
                 readOnly: false
             })
         ], ToggleIconButton.prototype, "iconClass", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], ToggleIconButton.prototype, "title", void 0);
         __decorate([
-            widget_1.accessibleHandler()
+            (0, widget_1.accessibleHandler)()
         ], ToggleIconButton.prototype, "_triggerAction", null);
         ToggleIconButton = __decorate([
-            decorators_1.subclass("widgets.ToggleIconButton")
+            (0, decorators_1.subclass)("widgets.ToggleIconButton")
         ], ToggleIconButton);
         return ToggleIconButton;
     }(Widget));

@@ -2,10 +2,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -41,19 +43,19 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widg
                 _a[CSS.visible] = this.hurricane != null,
                 _a);
             var hurricane = this.hurricane;
-            var renderedHurricanes = !hurricane ? null : (widget_1.tsx("div", { class: CSS.modal },
-                widget_1.tsx("div", { class: CSS.hurricaneInfo },
-                    widget_1.tsx("div", { class: CSS.hurricaneSeason }, hurricane.season),
-                    widget_1.tsx("div", { class: CSS.hurricaneMaxWind }, Math.round(hurricane.maxWind * 1.852) + " km/h")),
-                widget_1.tsx("div", { class: CSS.hurricaneName }, hurricane.name)));
-            return (widget_1.tsx("div", { bind: this, classes: classes, class: CSS.base },
-                widget_1.tsx("div", { class: CSS.background }, renderedHurricanes)));
+            var renderedHurricanes = !hurricane ? null : ((0, widget_1.tsx)("div", { class: CSS.modal },
+                (0, widget_1.tsx)("div", { class: CSS.hurricaneInfo },
+                    (0, widget_1.tsx)("div", { class: CSS.hurricaneSeason }, hurricane.season),
+                    (0, widget_1.tsx)("div", { class: CSS.hurricaneMaxWind }, Math.round(hurricane.maxWind * 1.852) + " km/h")),
+                (0, widget_1.tsx)("div", { class: CSS.hurricaneName }, hurricane.name)));
+            return ((0, widget_1.tsx)("div", { bind: this, classes: classes, class: CSS.base },
+                (0, widget_1.tsx)("div", { class: CSS.background }, renderedHurricanes)));
         };
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], HurricaneInfo.prototype, "hurricane", void 0);
         HurricaneInfo = __decorate([
-            decorators_1.subclass("widgets.HurricaneInfo")
+            (0, decorators_1.subclass)("widgets.HurricaneInfo")
         ], HurricaneInfo);
         return HurricaneInfo;
     }(Widget));

@@ -1,8 +1,9 @@
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -33,14 +34,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "esri/layers/Layer", "esri/WebMap", "esri/tasks/support/StatisticDefinition", "../widgets/Banner", "esri/tasks/support/Query", "esri/widgets/Zoom", "esri/widgets/Legend", "esri/widgets/Home", "../widgets/Indicator", "../widgets/IconButton"], function (require, exports, PortalItem, MapView, Layer, WebMap, StatisticDefinition, Banner_1, Query, Zoom, Legend, Home, Indicator_1, IconButton_1) {
+define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "esri/layers/Layer", "esri/WebMap", "esri/rest/support/StatisticDefinition", "../widgets/Banner", "esri/rest/support/Query", "esri/widgets/Zoom", "esri/widgets/Legend", "esri/widgets/Home", "../widgets/Indicator", "../widgets/IconButton"], function (require, exports, PortalItem, MapView, Layer, WebMap, StatisticDefinition, Banner_1, Query, Zoom, Legend, Home, Indicator_1, IconButton_1) {
     "use strict";
-    var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
     var view;
-    (function () { return __awaiter(_this, void 0, void 0, function () {
+    (function () { return __awaiter(void 0, void 0, void 0, function () {
         var map, layer, nyc;
-        var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -104,7 +103,7 @@ define(["require", "exports", "esri/portal/PortalItem", "esri/views/MapView", "e
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2
                         }),
-                        queryStatistics: function (layerView, geometry) { return __awaiter(_this, void 0, void 0, function () {
+                        queryStatistics: function (layerView, geometry) { return __awaiter(void 0, void 0, void 0, function () {
                             var query, featureSet, _a, sumActivePop, sumUnemployedPop;
                             return __generator(this, function (_b) {
                                 switch (_b.label) {

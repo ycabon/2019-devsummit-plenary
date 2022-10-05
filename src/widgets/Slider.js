@@ -2,10 +2,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -41,10 +43,10 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widg
         //
         //--------------------------------------------------------------------------
         Slider.prototype.render = function () {
-            var titleNode = this.title ? widget_1.tsx("span", { class: CSS.title }, this.title) : null;
-            return (widget_1.tsx("div", { bind: this, class: CSS.base },
+            var titleNode = this.title ? (0, widget_1.tsx)("span", { class: CSS.title }, this.title) : null;
+            return ((0, widget_1.tsx)("div", { bind: this, class: CSS.base },
                 titleNode,
-                widget_1.tsx("input", { bind: this, class: CSS.value, onchange: this._changeHandler, oninput: this._changeHandler, type: "range", min: this.min, max: this.max, step: this.step, value: this.value })));
+                (0, widget_1.tsx)("input", { bind: this, class: CSS.value, onchange: this._changeHandler, oninput: this._changeHandler, type: "range", min: this.min, max: this.max, step: this.step, value: this.value })));
         };
         Slider.prototype._changeHandler = function (event) {
             this.value = parseFloat(event.target.value);
@@ -53,28 +55,28 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widg
             }
         };
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], Slider.prototype, "action", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], Slider.prototype, "min", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], Slider.prototype, "max", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], Slider.prototype, "step", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], Slider.prototype, "value", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], Slider.prototype, "title", void 0);
         __decorate([
-            widget_1.accessibleHandler()
+            (0, widget_1.accessibleHandler)()
         ], Slider.prototype, "_changeHandler", null);
         Slider = __decorate([
-            decorators_1.subclass("widgets.Slider")
+            (0, decorators_1.subclass)("widgets.Slider")
         ], Slider);
         return Slider;
     }(Widget));

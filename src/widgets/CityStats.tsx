@@ -5,8 +5,8 @@ import { tsx } from "esri/widgets/support/widget";
 import { whenFalse, watch } from "esri/core/watchUtils";
 import { eachAlways } from "esri/core/promiseUtils";
 import FeatureLayer = require("esri/layers/FeatureLayer");
-import Query = require("esri/tasks/support/Query");
-import StatisticDefinition = require("esri/tasks/support/StatisticDefinition");
+import Query = require("esri/rest/support/Query");
+import StatisticDefinition = require("esri/rest/support/StatisticDefinition");
 import MapView = require("esri/views/MapView");
 import FeatureLayerView = require("esri/views/layers/FeatureLayerView");
 
@@ -30,7 +30,7 @@ export default class CityStats extends Widget {
   // was a new demand of stats made
   private _refresh = false;
   // promise to the current stats.
-  private _statsPromise: IPromise;
+  private _statsPromise: Promise<void>;
 
   @property()
   iconClass: string = "esri-icon-dashboard";
@@ -114,7 +114,7 @@ export default class CityStats extends Widget {
     .then((results: any) => this.displayResults(results));
   }
 
-  displayResults(results: any): any {
+  displayResults(results: any): void {
     this.statistics = results[0].value && results[0].value[0].attributes;
     this.count = results[1].value;
 

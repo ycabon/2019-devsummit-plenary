@@ -2,10 +2,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -85,14 +87,14 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widg
                 },
                 _b[CSS.dropboxIcon] = true,
                 _b);
-            return (widget_1.tsx("div", { bind: this, class: CSS.base, classes: classes },
-                widget_1.tsx("div", { class: CSS.background },
-                    widget_1.tsx("div", { class: CSS.modal },
-                        widget_1.tsx("div", { class: CSS.label }, "Drop here your geo data"),
-                        widget_1.tsx("div", { class: CSS.dropbox },
-                            widget_1.tsx("span", { classes: iconClasses })),
-                        widget_1.tsx("div", { class: CSS.loaderContainer },
-                            widget_1.tsx("div", { class: CSS.loader }, "Loading..."))))));
+            return ((0, widget_1.tsx)("div", { bind: this, class: CSS.base, classes: classes },
+                (0, widget_1.tsx)("div", { class: CSS.background },
+                    (0, widget_1.tsx)("div", { class: CSS.modal },
+                        (0, widget_1.tsx)("div", { class: CSS.label }, "Drop here your geo data"),
+                        (0, widget_1.tsx)("div", { class: CSS.dropbox },
+                            (0, widget_1.tsx)("span", { classes: iconClasses })),
+                        (0, widget_1.tsx)("div", { class: CSS.loaderContainer },
+                            (0, widget_1.tsx)("div", { class: CSS.loader }, "Loading..."))))));
         };
         DropTarget.prototype._dragEnterHandler = function (event) {
             this._receiveEvent(event);
@@ -150,19 +152,19 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widg
             }
         };
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], DropTarget.prototype, "drop", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], DropTarget.prototype, "state", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], DropTarget.prototype, "loading", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], DropTarget.prototype, "view", void 0);
         DropTarget = __decorate([
-            decorators_1.subclass("widgets.DropTarget")
+            (0, decorators_1.subclass)("widgets.DropTarget")
         ], DropTarget);
         return DropTarget;
     }(Widget));

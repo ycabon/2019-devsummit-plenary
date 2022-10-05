@@ -4,10 +4,10 @@ import Layer = require("esri/layers/Layer");
 import GroupLayer = require("esri/layers/GroupLayer");
 import FeatureLayer = require("esri/layers/FeatureLayer");
 import WebMap = require("esri/WebMap");
-import StatisticDefinition = require("esri/tasks/support/StatisticDefinition");
+import StatisticDefinition = require("esri/rest/support/StatisticDefinition");
 import Header from "../widgets/Banner";
 
-import Query = require("esri/tasks/support/Query");
+import Query = require("esri/rest/support/Query");
 
 import Zoom = require("esri/widgets/Zoom");
 import Legend = require("esri/widgets/Legend");

@@ -2,7 +2,6 @@ import { subclass, property } from "esri/core/accessorSupport/decorators";
 import Widget = require("esri/widgets/Widget");
 import { tsx } from "esri/widgets/support/widget";
 
-import { whenFalse, watch } from "esri/core/watchUtils";
 import GroupLayer = require("esri/layers/GroupLayer");
 import FeatureLayer = require("esri/layers/FeatureLayer");
 import GeoJSONLayer = require("esri/layers/GeoJSONLayer");
@@ -10,6 +9,7 @@ import CSVLayer = require("esri/layers/CSVLayer");
 import MapView = require("esri/views/MapView");
 import FeatureLayerView = require("esri/views/layers/FeatureLayerView");
 import { Extent, Polygon } from "esri/geometry";
+import { watch, when } from "esri/core/reactiveUtils";
 
 const CSS = {
   base: "esri-widget widgets-indicator",
@@ -23,11 +23,11 @@ const CSS = {
 export default class Indicator extends Widget {
 
   constructor(props?: Partial<Pick<Indicator, "queryStatistics" | "title" | "layer" | "view" | "format" | "container">>) {
-    super();
+    super(props);
   }
 
   // promise to the current stats.
-  private _statsPromise: IPromise = null;
+  private _statsPromise: Promise<number> = null;
   private _refresh: boolean = false;
 
   @property()
@@ -53,11 +53,11 @@ export default class Indicator extends Widget {
   @property()
   geometry: Extent | Polygon;
 
-  postInitialize() {
+  initialize() {
     const updateCallback = () => this.updateStatistics();
     this.own([
-      whenFalse(this, "view.updating", updateCallback),
-      watch(this, ["view.extent", "statisticDefinition", "geometry"], updateCallback)
+      when(() => !this.view?.updating, updateCallback),
+      watch(() => [this.view?.extent, this.geometry], updateCallback)
     ])
   }
 

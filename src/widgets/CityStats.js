@@ -2,10 +2,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -17,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "esri/core/watchUtils", "esri/core/promiseUtils", "esri/tasks/support/Query", "esri/tasks/support/StatisticDefinition"], function (require, exports, decorators_1, Widget, widget_1, watchUtils_1, promiseUtils_1, Query, StatisticDefinition) {
+define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "esri/core/watchUtils", "esri/core/promiseUtils", "esri/rest/support/Query", "esri/rest/support/StatisticDefinition"], function (require, exports, decorators_1, Widget, widget_1, watchUtils_1, promiseUtils_1, Query, StatisticDefinition) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CSS = {
@@ -44,9 +46,9 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widg
             var _this = this;
             var view = this.view;
             var updateCallback = function () { return _this.updateStatistics(); };
-            watchUtils_1.whenFalse(this, "view.updating", updateCallback);
-            watchUtils_1.watch(this, "view.extent", updateCallback);
-            watchUtils_1.watch(this, "year", updateCallback);
+            (0, watchUtils_1.whenFalse)(this, "view.updating", updateCallback);
+            (0, watchUtils_1.watch)(this, "view.extent", updateCallback);
+            (0, watchUtils_1.watch)(this, "year", updateCallback);
         };
         CityStats.prototype.updateStatistics = function () {
             var _this = this;
@@ -61,7 +63,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widg
         CityStats.prototype.queryStatistics = function (layerView) {
             var _this = this;
             // Define query parameters
-            var where = "CNSTRCT_YR <= " + this.year;
+            var where = "CNSTRCT_YR <= ".concat(this.year);
             var geometry = this.view.extent;
             var outStatistics = [
                 new StatisticDefinition({
@@ -86,7 +88,7 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widg
                 geometry: geometry,
                 outStatistics: outStatistics
             }));
-            return promiseUtils_1.eachAlways([
+            return (0, promiseUtils_1.eachAlways)([
                 buildStatsPromise,
                 countPromise
             ])
@@ -108,39 +110,39 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widg
                 MAX_HEIGHTROOF: 0,
                 AVG_CNSTRCT_YR: 0
             };
-            return (widget_1.tsx("div", { bind: this, class: CSS.base, classes: classes },
-                widget_1.tsx("div", { class: CSS.cardBlue },
-                    widget_1.tsx("div", { class: CSS.cardTitle }, "Buildings Count"),
-                    widget_1.tsx("div", { class: CSS.cardValue }, this.count)),
-                widget_1.tsx("div", { class: CSS.cardGreen },
-                    widget_1.tsx("div", { class: CSS.cardTitle }, "Max Height"),
-                    widget_1.tsx("div", { class: CSS.cardValue },
+            return ((0, widget_1.tsx)("div", { bind: this, class: CSS.base, classes: classes },
+                (0, widget_1.tsx)("div", { class: CSS.cardBlue },
+                    (0, widget_1.tsx)("div", { class: CSS.cardTitle }, "Buildings Count"),
+                    (0, widget_1.tsx)("div", { class: CSS.cardValue }, this.count)),
+                (0, widget_1.tsx)("div", { class: CSS.cardGreen },
+                    (0, widget_1.tsx)("div", { class: CSS.cardTitle }, "Max Height"),
+                    (0, widget_1.tsx)("div", { class: CSS.cardValue },
                         Math.round(stats.MAX_HEIGHTROOF),
                         " ft")),
-                widget_1.tsx("div", { class: CSS.cardOrange },
-                    widget_1.tsx("div", { class: CSS.cardTitle }, "Avg Construction Year"),
-                    widget_1.tsx("div", { class: CSS.cardValue }, Math.round(stats.AVG_CNSTRCT_YR)))));
+                (0, widget_1.tsx)("div", { class: CSS.cardOrange },
+                    (0, widget_1.tsx)("div", { class: CSS.cardTitle }, "Avg Construction Year"),
+                    (0, widget_1.tsx)("div", { class: CSS.cardValue }, Math.round(stats.AVG_CNSTRCT_YR)))));
         };
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], CityStats.prototype, "iconClass", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], CityStats.prototype, "layer", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], CityStats.prototype, "count", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], CityStats.prototype, "statistics", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], CityStats.prototype, "view", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], CityStats.prototype, "year", void 0);
         CityStats = __decorate([
-            decorators_1.subclass("widgets.CityStats")
+            (0, decorators_1.subclass)("widgets.CityStats")
         ], CityStats);
         return CityStats;
     }(Widget));

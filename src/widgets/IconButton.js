@@ -2,10 +2,12 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -61,11 +63,11 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widg
                 _b);
             var iconRendered = !this.iconClass ?
                 null :
-                widget_1.tsx("span", { "aria-hidden": "true", role: "presentation", class: CSS.icon, classes: iconClasses });
+                (0, widget_1.tsx)("span", { "aria-hidden": "true", role: "presentation", class: CSS.icon, classes: iconClasses });
             var titleRendered = !this.title ?
                 null :
-                widget_1.tsx("span", null, this.title);
-            return (widget_1.tsx("div", { bind: this, class: CSS.button, classes: rootClasses, onclick: this._triggerAction, onkeydown: this._triggerAction, role: "button", tabIndex: tabIndex, title: this.title },
+                (0, widget_1.tsx)("span", null, this.title);
+            return ((0, widget_1.tsx)("div", { bind: this, class: CSS.button, classes: rootClasses, onclick: this._triggerAction, onkeydown: this._triggerAction, role: "button", tabIndex: tabIndex, title: this.title },
                 iconRendered,
                 titleRendered));
         };
@@ -80,24 +82,24 @@ define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widg
             }
         };
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], IconButton.prototype, "action", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], IconButton.prototype, "enabled", void 0);
         __decorate([
-            decorators_1.property({
+            (0, decorators_1.property)({
                 readOnly: false
             })
         ], IconButton.prototype, "iconClass", void 0);
         __decorate([
-            decorators_1.property()
+            (0, decorators_1.property)()
         ], IconButton.prototype, "title", void 0);
         __decorate([
-            widget_1.accessibleHandler()
+            (0, widget_1.accessibleHandler)()
         ], IconButton.prototype, "_triggerAction", null);
         IconButton = __decorate([
-            decorators_1.subclass("widgets.IconButton")
+            (0, decorators_1.subclass)("widgets.IconButton")
         ], IconButton);
         return IconButton;
     }(Widget));
