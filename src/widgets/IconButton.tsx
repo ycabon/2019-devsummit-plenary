@@ -1,14 +1,11 @@
-/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
-/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
-
 // esri.core.accessorSupport
-import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
+import { subclass, property } from "esri/core/accessorSupport/decorators";
 
 // esri.widgets
 import Widget = require("esri/widgets/Widget");
 
 // esri.widgets.support
-import { accessibleHandler, tsx, renderable } from "esri/widgets/support/widget";
+import { accessibleHandler, tsx } from "esri/widgets/support/widget";
 
 const CSS = {
   button: "esri-component esri-widget--button esri-widget widgets-iconbutton",
@@ -18,7 +15,7 @@ const CSS = {
 };
 
 @subclass("widgets.IconButton")
-export default class IconButton extends declared(Widget) {
+export default class IconButton extends Widget {
 
   constructor(props: Partial<Pick<IconButton, "iconClass" | "title" | "action">>) {
     super(props as any);
@@ -42,7 +39,6 @@ export default class IconButton extends declared(Widget) {
   //----------------------------------
 
   @property()
-  @renderable()
   enabled = true;
 
   //----------------------------------
@@ -52,7 +48,6 @@ export default class IconButton extends declared(Widget) {
   @property({
     readOnly: false
   })
-  @renderable()
   iconClass = "";
 
   //----------------------------------
@@ -60,7 +55,6 @@ export default class IconButton extends declared(Widget) {
   //----------------------------------
 
   @property()
-  @renderable()
   title = "";
 
   //--------------------------------------------------------------------------

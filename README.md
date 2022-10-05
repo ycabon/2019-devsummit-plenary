@@ -6,7 +6,7 @@ The following demos were presented at the Esri DevSummit 2019 to demonstrate new
 
 ### Client-side queries
 
-[View live app](https://ycabon.github.com/2019-devsummit-plenary/1_client-side-queries.html)
+[View live app](https://ycabon.github.io/2019-devsummit-plenary/1_client-side-queries.html)
 
 This demo showcases an indicator showing the employment percentage in the current view extent. As the user pans and zooms around the indicator updates in real-time. It's built using client-side queries. Instead of going back and forth to a server, the statistical query is running directly in the web browser using [`FeatureLayerView.queryFeatures()`](https://developers.arcgis.com/javascript/latest/api-reference/esri-views-layers-FeatureLayerView.html#queryFeatures)
 

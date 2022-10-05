@@ -1,9 +1,6 @@
-/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
-/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
-
-import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
+import { subclass, property } from "esri/core/accessorSupport/decorators";
 import Widget = require("esri/widgets/Widget");
-import { renderable, tsx } from "esri/widgets/support/widget";
+import { tsx } from "esri/widgets/support/widget";
 
 const CSS = {
   base: "widgets-hurricaneinfo",
@@ -22,13 +19,12 @@ interface HurricaneInfo<T> {
 }
 
 @subclass("widgets.HurricaneInfo")
-class HurricaneInfo<T = any> extends declared(Widget) {
+class HurricaneInfo<T = any> extends Widget {
 
   // constructor(props: Partial<Pick<HurricaneInfo<T>, "drop" | "view">>) {
   //   super(props as any);
   // }
   @property()
-  @renderable()
   hurricane: HashMap<any>;
 
   render() {

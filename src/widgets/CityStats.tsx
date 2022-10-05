@@ -1,11 +1,7 @@
-/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
-/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
-
-import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
+import { subclass, property } from "esri/core/accessorSupport/decorators";
 import Widget = require("esri/widgets/Widget");
-import { renderable, tsx } from "esri/widgets/support/widget";
+import { tsx } from "esri/widgets/support/widget";
 
-import Graphic = require("esri/Graphic");
 import { whenFalse, watch } from "esri/core/watchUtils";
 import { eachAlways } from "esri/core/promiseUtils";
 import FeatureLayer = require("esri/layers/FeatureLayer");
@@ -25,7 +21,7 @@ const CSS = {
 };
 
 @subclass("widgets.CityStats")
-export default class CityStats extends declared(Widget) {
+export default class CityStats extends Widget {
 
   constructor(props: Partial<CityStats>) {
     super(props);
@@ -43,11 +39,9 @@ export default class CityStats extends declared(Widget) {
   layer: FeatureLayer;
 
   @property()
-  @renderable()
   count: number = 0;
 
   @property()
-  @renderable()
   statistics: HashMap<number> = null;
 
   @property()

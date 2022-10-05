@@ -1,14 +1,11 @@
-/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
-/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
-
 // esri.core.accessorSupport
-import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
+import { subclass, property } from "esri/core/accessorSupport/decorators";
 
 // esri.widgets
 import Widget = require("esri/widgets/Widget");
 
 // esri.widgets.support
-import { accessibleHandler, tsx, renderable } from "esri/widgets/support/widget";
+import { accessibleHandler, tsx } from "esri/widgets/support/widget";
 
 const CSS = {
   base: "esri-widget widgets-slider",
@@ -17,7 +14,7 @@ const CSS = {
 };
 
 @subclass("widgets.Slider")
-export default class Slider extends declared(Widget) {
+export default class Slider extends Widget {
 
   constructor(props: Partial<Pick<Slider, "min" | "max" | "step" | "value" | "title" | "action" | "container">>) {
     super(props as any);
@@ -41,7 +38,6 @@ export default class Slider extends declared(Widget) {
   //----------------------------------
 
   @property()
-  @renderable()
   min: number;
 
   //----------------------------------
@@ -49,7 +45,6 @@ export default class Slider extends declared(Widget) {
   //----------------------------------
 
   @property()
-  @renderable()
   max: number;
 
   //----------------------------------
@@ -57,7 +52,6 @@ export default class Slider extends declared(Widget) {
   //----------------------------------
 
   @property()
-  @renderable()
   step: number;
 
   //----------------------------------
@@ -65,7 +59,6 @@ export default class Slider extends declared(Widget) {
   //----------------------------------
 
   @property()
-  @renderable()
   value: number;
 
   //----------------------------------
@@ -73,7 +66,6 @@ export default class Slider extends declared(Widget) {
   //----------------------------------
 
   @property()
-  @renderable()
   title = "";
 
   //--------------------------------------------------------------------------

@@ -1,9 +1,8 @@
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -36,11 +35,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 define(["require", "exports", "esri/views/MapView", "esri/WebMap", "esri/core/watchUtils", "esri/renderers", "esri/symbols", "../widgets/Banner", "esri/layers/GeoJSONLayer", "esri/renderers/visualVariables/SizeVariable", "esri/views/layers/support/FeatureFilter", "esri/views/layers/support/FeatureEffect", "../widgets/IconButton", "esri/tasks/support/StatisticDefinition", "esri/widgets/Expand", "esri/widgets/Zoom", "esri/widgets/Home", "esri/geometry"], function (require, exports, MapView, WebMap, watchUtils_1, renderers_1, symbols_1, Banner_1, GeoJSONLayer, SizeVariable, FeatureFilter, FeatureEffect, IconButton_1, StatisticDefinition, Expand, Zoom, Home, geometry_1) {
     "use strict";
+    var _this = this;
     Object.defineProperty(exports, "__esModule", { value: true });
     var hljs = window["hljs"];
     var map;
     var view;
-    (function () { return __awaiter(void 0, void 0, void 0, function () {
+    (function () { return __awaiter(_this, void 0, void 0, function () {
         function createSlider(view, layer, element, field, numBins) {
             return __awaiter(this, void 0, void 0, function () {
                 function executeAnalysis() {

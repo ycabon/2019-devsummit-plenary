@@ -1,16 +1,12 @@
-/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
-/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
-
-import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
+import { subclass, property } from "esri/core/accessorSupport/decorators";
 import Widget = require("esri/widgets/Widget");
-import { renderable, tsx } from "esri/widgets/support/widget";
+import { tsx } from "esri/widgets/support/widget";
 
 import { whenFalse, watch } from "esri/core/watchUtils";
 import GroupLayer = require("esri/layers/GroupLayer");
 import FeatureLayer = require("esri/layers/FeatureLayer");
 import GeoJSONLayer = require("esri/layers/GeoJSONLayer");
 import CSVLayer = require("esri/layers/CSVLayer");
-import StatisticDefinition = require("esri/tasks/support/StatisticDefinition");
 import MapView = require("esri/views/MapView");
 import FeatureLayerView = require("esri/views/layers/FeatureLayerView");
 import { Extent, Polygon } from "esri/geometry";
@@ -24,7 +20,7 @@ const CSS = {
 };
 
 @subclass("widgets.Indicator")
-export default class Indicator extends declared(Widget) {
+export default class Indicator extends Widget {
 
   constructor(props?: Partial<Pick<Indicator, "queryStatistics" | "title" | "layer" | "view" | "format" | "container">>) {
     super();
@@ -37,7 +33,6 @@ export default class Indicator extends declared(Widget) {
   @property()
   iconClass: string = "esri-icon-dashboard";
 
-  @renderable()
   format: Intl.NumberFormat;
 
   @property()
@@ -47,11 +42,9 @@ export default class Indicator extends declared(Widget) {
   layer: GroupLayer | FeatureLayer | CSVLayer | GeoJSONLayer;
 
   @property()
-  @renderable()
   title: string;
 
   @property()
-  @renderable()
   value: number;
 
   @property()

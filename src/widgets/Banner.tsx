@@ -1,9 +1,6 @@
-/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
-/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
-
-import { subclass, declared, property } from "esri/core/accessorSupport/decorators";
+import { subclass, property } from "esri/core/accessorSupport/decorators";
 import Widget = require("esri/widgets/Widget");
-import { renderable, tsx } from "esri/widgets/support/widget";
+import { tsx } from "esri/widgets/support/widget";
 
 const CSS = {
   base: "widgets-header",
@@ -12,18 +9,16 @@ const CSS = {
 };
 
 @subclass("widgets.Header")
-export default class Header extends declared(Widget) {
+export default class Header extends Widget {
 
   constructor(props: Partial<Pick<Header, "title" | "actionContent">>) {
     super(props as any);
   }
 
   @property()
-  @renderable()
   title: string = "";
 
   @property()
-  @renderable()
   actionContent: Widget[];
 
   render() {

@@ -1,5 +1,3 @@
-/// <amd-dependency path="esri/core/tsSupport/declareExtendsHelper" name="__extends" />
-/// <amd-dependency path="esri/core/tsSupport/decorateHelper" name="__decorate" />
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -19,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/core/tsSupport/decorateHelper", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "esri/core/watchUtils"], function (require, exports, __extends, __decorate, decorators_1, Widget, widget_1, watchUtils_1) {
+define(["require", "exports", "esri/core/accessorSupport/decorators", "esri/widgets/Widget", "esri/widgets/support/widget", "esri/core/watchUtils"], function (require, exports, decorators_1, Widget, widget_1, watchUtils_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var CSS = {
@@ -108,21 +106,16 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             decorators_1.property()
         ], Indicator.prototype, "iconClass", void 0);
         __decorate([
-            widget_1.renderable()
-        ], Indicator.prototype, "format", void 0);
-        __decorate([
             decorators_1.property()
         ], Indicator.prototype, "queryStatistics", void 0);
         __decorate([
             decorators_1.property()
         ], Indicator.prototype, "layer", void 0);
         __decorate([
-            decorators_1.property(),
-            widget_1.renderable()
+            decorators_1.property()
         ], Indicator.prototype, "title", void 0);
         __decorate([
-            decorators_1.property(),
-            widget_1.renderable()
+            decorators_1.property()
         ], Indicator.prototype, "value", void 0);
         __decorate([
             decorators_1.property()
@@ -134,7 +127,7 @@ define(["require", "exports", "esri/core/tsSupport/declareExtendsHelper", "esri/
             decorators_1.subclass("widgets.Indicator")
         ], Indicator);
         return Indicator;
-    }(decorators_1.declared(Widget)));
+    }(Widget));
     exports.default = Indicator;
 });
 //# sourceMappingURL=Indicator.js.map
